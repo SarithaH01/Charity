@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+</head>
+<body style="overflow-x: hidden;" class="body">
+    
+    <div class="event-view" style="z-index: 1500;">
+        <h2 style="width: 50px;height: 50px;background-color: #262626;color: white;display: flex;justify-content: center;align-items: center;position: fixed;top: 25px;left: 25px;cursor: pointer;" onclick="back()"><i class="fa-solid fa-arrow-left"></i></h2>
+        <div class="event-wrap" style="margin-top:80px;">
+            <img src="{% static 'images/featuredCateShape1.png' %}" alt="" style="position: absolute;top: 0;left: 0;z-index: 10;width: 190px;">
+            <h4 style="position: absolute;top: 10px;left: 20px;z-index: 10;z-index: 150;color: white;font-size: 22px;" class="category">#LIFE</h4>
+            <div style="position: relative;width: 600px;">
+                <img src="{{event.image.url}}" alt="" class="post-img">
+                <div class="det" style="position: absolute;bottom: 0;width: 100%;height: 50px;background-color: rgb(28, 28, 28);display: flex;justify-content: space-around;align-items: center;color: white;">
+                    <h3 style="font-size: 14px;font-weight:400;text-transform: uppercase;" class="user">Hosted By : {{event.user.username}}</h3>
+                    <h3 style="font-size: 14px;font-weight:400;text-transform: uppercase;" class="date">Hosted on : {{event.date}}</h3>
+                </div>
+            </div>
+            <img src="https://codercredit.com/tf/gainioz/image/illus/hero-bg-thumb-2.png" alt="" style="position: absolute;z-index: 0;opacity: 0.2;width: 100%;top: 300px;">
+            <h1 class="title">{{event.title}}</h1>
+            <p class="description">{{event.description}}</p>
+             
+
+
+
+            
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="navbar" style="z-index: 150;">
+            <img src="{% static 'images/logo_1.svg' %}" alt="">
+            <div class="link">
+                <a href="{% url 'homepage' %}">HOME</a>
+                <a href="about.html">ABOUT</a>
+                <a href="{% url 'donation' %}">DONATIONS</a>
+                <a href="{% url 'blog' %}">BLOG</a>
+                <!-- <a href="">PAGES</a> -->
+                <a href="">CONTACTS</a>
+            </div>
+            <div class="icons">
+                <h2 style="opacity: 0;pointer-events: none;"><ion-icon name="bag-handle-outline"></ion-icon></h2>
+                <h2 style="opacity: 0;pointer-events: none;"><ion-icon name="search-outline"></ion-icon></h2>
+            </div>
+            {% if not request.user.is_authenticated %}
+            <!-- <button style="background-color: #e8e8e8;color: black;" >Login</button> -->
+            <button onclick="showLogin()" style="margin-left: -80px;">Login</button>
+            {% else %}
+            <a href="{% url 'logout' %}"><button style="background-color: #e8e8e8;color: black;">Logout</button></a>
+
+            {% endif %}
+        </div>
+        <div class="banner">
+            <img src="{% static 'images/pagebreadcumbShapeBottom.svg' %}" class="img3" alt=""> 
+            <div class="banner-image1">
+                <img src="{% static 'images/pageBreadcumbBg1.jpg' %}" class="img1" alt="">
+                <div class="banner-details">
+                    <h1>BLOG</h1>
+                    <h3><a href="index.html">Home</a> > <a href="about.html" style="color: #ff9900;">> Blog</a></h3>
+                </div>
+            </div> 
+            <img src="{% static 'images/pagebreadcumbShapeTop.svg' %}" class="img2" alt="">  
+        </div>
+
+           <center>
+            <h1 style="margin-top: 25px;">BLOGS</h1>
+            <p>Below are the list of blogs</p>
+           </center>
+
+        <div class="blogs">
+            {% for blog in blogs %}
+            <div class="blog">
+
+                <img src="{{blog.image}}" alt="" class="bimg">
+                
+                <div style="display: flex;justify-content: space-between;align-items: center;margin-top: 15px;margin-bottom: 25px;">
+                    <div style="display: flex;gap: 15px;justify-content: center;align-items: center;">
+
+                        <img src="{{blog.profile}}" alt="" class="author1">
+                        <h3 style="font-weight: 400;" class="username">{{blog.username}}</h3>
+                    </div>
+                    <p style="font-weight: 500;font-size: 13px;" class="bdate">{{blog.date}}</p>
+                </div>
+
+                <h3 style="font-weight: 500;line-height: 30px;" class="btitle">{{blog.title}}</h3>
+                <p style="line-height: 30px;opacity: 0.7;margin-top: 10px;height: 60px;overflow: hidden;" class="bdesc">{{blog.desc}}</p>
+
+                <button style="width: 100%;padding: 10px;border: 2px solid rgb(230, 230, 230);background-color: rgb(238, 238, 238);outline: none;margin-top: 15px;font-size: 17px;cursor: pointer;" onclick="showBlog(this.parentNode)">view more</button>
+            </div>
+            {% endfor %}
+
+        </div>
+        
+    </div>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    
+   <script>
+     function showBlog(element){
+        document.querySelector('.event-view').style.display = "flex"
+        document.querySelector('.body').style.overflowY = "hidden"
+        document.querySelector('.title').innerText = element.querySelector('.btitle').innerText
+        document.querySelector('.description').innerText = element.querySelector('.bdesc').innerText
+        document.querySelector('.post-img').src = element.querySelector('.bimg').src
+        document.querySelector('.user').innerText = "POSTED BY : "+ element.querySelector('.username').innerText
+        document.querySelector('.date').innerText = "POSTED ON : "+ element.querySelector('.bdate').innerText
+        // document.querySelector('.categ').src = element.querySelector('.post-img').src
+    }
+
+    function back(){
+        document.querySelector('.event-view').style.display = "none"
+        document.querySelector('.body').style.overflowY = "scroll"
+    }
+
+   </script>
+</body>
+</html>
