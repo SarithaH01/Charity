@@ -4,9 +4,10 @@ from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db.models import Q
+
 from django.contrib.auth.models import User
 from .models import userProfile,Event,Donation,Account,Blog
-from web3 import Web3
+from web3 import Web3              
 
 from django.core.files.storage import FileSystemStorage
 
@@ -251,12 +252,12 @@ def createEvent(request):
     ).build_transaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
 
    
-    sign_store_contact = w3.eth.account.sign_transaction(
-        store_contact, private_key=private_key
-    )
+    #sign_store_contact = w3.eth.account.sign_transaction(
+    #    store_contact, private_key=private_key
+    #)
     # Send the transaction
-    send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
-    transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
+    #send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
+    #transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
     
     return HttpResponseRedirect(reverse('homepage'))
 
