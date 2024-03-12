@@ -13,9 +13,9 @@ urlpatterns = [
     path('donation/', views.donations,name = 'donation'),
     path('createEvent/', views.createEvent,name = 'createEvent'),
     path('eventView/<int:pk>', views.eventView,name = 'eventView'),
-    
-    
+    path('donate/', views.donate,name = 'donate'),
+    path('tracking/<int:pk>', views.tracking,name = 'tracking'),
     path('blog/', views.blog,name = 'blog'),
     path('charityDonation/<int:pk>', views.charityDonation,name = 'charityDonation'),
-    
+    path('sendDonation/', views.sendDonation,name = 'sendDonation'),
 ]

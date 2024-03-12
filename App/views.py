@@ -4,17 +4,16 @@ from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db.models import Q
-
 from django.contrib.auth.models import User
 from .models import userProfile,Event,Donation,Account,Blog
-from web3 import Web3              #a library used to interact with ganache
+from web3 import Web3
 
 from django.core.files.storage import FileSystemStorage
 
-ganache_url = "HTTP://127.0.0.1:7545"  #url of ganache
+ganache_url = "HTTP://127.0.0.1:7545"
 
 
-accounts_list = [{"address":"0xA0CFA7cA389f0b6CfCAc8FDA6E99aa2E624Dd788","private_key":"0x0ed987e3c5075e209f949a0823329ba0951f6b99e46f7682e5a0c82f4f30de25"},{"address":"0xd9aE87042D59B742f44a48982cf2691Ff5A88918","private_key":"0xabfd7d84417ccdbc6665e859c6ec4e5451f5e54ffecf5d2a03184326a4d0bdf0"},{"address":"0xe6160e47bbe9FF8014C9a35607ddA403421F44cE","private_key":"0x9a7063fe793bd3c36afbe06f3344de2776b057ad1bf2828a69932085361f4c9b"}]
+accounts_list = [{"address":"0x9427D625b67E74F4Bd8DFB297507F49b7718777f","private_key":"9f8b43a8e16dca8f6ada734e6709e4613ee5ea8474ccd28621cd37daf2795b25"},{"address":"0x6fc6799BDF2cd05F97c3E25e2B5b14fD5C5A6691","private_key":"0153ba07a1fc8e859619ae09be74e585bc3b2f2951235d98ad9c92a5b21cf1e8"},{"address":"0x8E6C22e5a29FA4f3f5B5bC1f6C48b0bcF60d2E2a","private_key":"22da6c21ca966aa4294814d83f56da586f739c7a95b3d036c8a8c971d56da16f"}]
 
 # print(accounts_list)
 
@@ -153,11 +152,11 @@ def donations(request):
     abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Donations"]["metadata"])["output"]["abi"]
 
 
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))         # initializes a connection to the Ethereum blockchain using the Web3 library
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     events_all =[]
     
     print("[+] Events : ",events)
-    for event in events:                # to pass all the details stored in blockchain to frontend
+    for event in events:
         # remaining =0
         sumAmt = 0
         donations = Donation.objects.filter(event = event)
@@ -185,16 +184,16 @@ def donations(request):
     return render(request,'donation.html',{"events":events_all,"profile":profile})
 
 
-def createEvent(request):                                   
+def createEvent(request):
     user = User.objects.filter(username = request.user.username).first()
     print(user)
     event = Event.objects.create(title = request.POST.get('title'),description = request.POST.get('description'),image = request.FILES['image'],phone = request.POST.get('phone'),address = request.POST.get('address'),user = user, goal = request.POST.get('goal'),hashtag = request.POST.get('hashtag'))
     
-    with open("account.sol", "r") as file:              #to open sol file in python
-        contact_list_file = file.read()                 
+    with open("account.sol", "r") as file:
+        contact_list_file = file.read()
 
 
-    compiled_sol = compile_standard(                    # to convert the sol file to python readable file and create a json file(account_code.json)
+    compiled_sol = compile_standard(
         {
             "language": "Solidity",
             "sources": {"ContactList.sol": {"content": contact_list_file}},
@@ -209,7 +208,7 @@ def createEvent(request):
         solc_version="0.8.0",
     )
     # print(compiled_sol)
-    with open("account_code.json", "w") as file:        # open the created json file
+    with open("account_code.json", "w") as file:
         json.dump(compiled_sol, file)
 
     bytecode = compiled_sol["contracts"]["ContactList.sol"]["Account"]["evm"]["bytecode"]["object"]
@@ -218,16 +217,16 @@ def createEvent(request):
     from web3 import Web3
 
     # For connecting to ganache
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))           # initializes a connection to the Ethereum blockchain using the Web3 library
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
-    address = "0x6F8aBFe472811A714f512af550d4c316781d1672"
-    private_key = "0xe304b4545f051170df21ea50196c5e74ea8cb6457b80a8c1ff5b3775f8331a52" # leaving the private key like this is very insecure if you are working on real world project
-    
-    ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)            # read all details from the contract then store it in ContactList
-    
-    nonce = w3.eth.get_transaction_count(address)   # numb only used once
+    address = "0x800A3BF5d9C6e42fFe4A57c7968618DdE81fd7cA"
+    private_key = "e0a9f2f78b2dca326b4116744b422d2ba1ba5c15392492c3c45a2e3fbe9021b0" # leaving the private key like this is very insecure if you are working on real world project
+    # Create the contract in Python
+    ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
+    # Get the number of latest transaction
+    nonce = w3.eth.getTransactionCount(address)
 
-    transaction = ContactList.constructor().build_transaction(
+    transaction = ContactList.constructor().buildTransaction(
         {
             "chainId": chain_id,
             "gasPrice": w3.eth.gas_price,
@@ -235,12 +234,12 @@ def createEvent(request):
             "nonce": nonce,
         }
     )
-    
+    # Sign the transaction
     sign_transaction = w3.eth.account.sign_transaction(transaction, private_key=private_key)
     print("Deploying Contract!")
-    
+    # Send the transaction
     transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
-    
+    # Wait for the transaction to be mined, and get the transaction receipt
     print("Waiting for transaction to finish...")
     transaction_receipt = w3.eth.wait_for_transaction_receipt(transaction_hash)
     print(f"[+] Done! Contract deployed to {transaction_receipt.contractAddress}")
@@ -249,16 +248,17 @@ def createEvent(request):
     contact_list = w3.eth.contract(address=transaction_receipt.contractAddress, abi=abi)
     store_contact = contact_list.functions.addAccount(
         str(event.pk),request.POST.get('accAddress'),request.POST.get('beneficiary'),str(eventHost.account_address)
-    ).build_transaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
+    ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
 
-   
-    #sign_store_contact = w3.eth.account.sign_transaction(
-    #    store_contact, private_key=private_key
-    #)
+    # Sign the transaction
+    sign_store_contact = w3.eth.account.sign_transaction(
+        store_contact, private_key=private_key
+    )
     # Send the transaction
-    #send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
-    #transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
-    
+    send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
+    # test = w3.eth.contract(address= str(transaction_receipt.contractAddress), abi=abi)
+    # print("[+] Details : ",test.functions.retrieve().call())
     return HttpResponseRedirect(reverse('homepage'))
 
 
@@ -338,6 +338,232 @@ from solcx import compile_standard, install_solc
 install_solc('0.8.0')
 import json
 
+def donate(request):
+    user = User.objects.filter(username = request.user.username).first()
+    print(user)
+    post = Event.objects.filter(pk = request.POST.get('pk')).first()
+    acc = Account.objects.filter(event = post).first()
+    print("acc ::::::::: ",acc)
+    #for getting account address
+
+
+    # For connecting to ganache
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    with open("account.sol", "r") as file:
+        contact_list_file = file.read()
+
+
+    compiled_sol = compile_standard(
+            {
+                "language": "Solidity",
+                "sources": {"ContactList.sol": {"content": contact_list_file}},
+                "settings": {
+                    "outputSelection": {
+                        "*": {
+                            "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"] # output needed to interact with and deploy contract 
+                        }
+                    }
+                },
+            },
+            solc_version="0.8.0",
+        )
+        # print(compiled_sol)
+    with open("account_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    bytecode = compiled_sol["contracts"]["ContactList.sol"]["Account"]["evm"]["bytecode"]["object"]
+    abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Account"]["metadata"])["output"]["abi"]
+
+    test = w3.eth.contract(address=acc.transaction_address, abi=abi)
+    print(test.functions.retrieve().call())
+
+    result = test.functions.retrieve().call()
+    print("result of account ::::::::::: ",result[0][0])
+
+    profile = userProfile.objects.filter(user = user).first()
+    to_user = User.objects.filter(username = request.POST.get('username')).first()
+    to_user_profile = userProfile.objects.filter(user = post.user).first()
+
+    account_1 = profile.account_address
+    account_2 = to_user_profile.account_address
+
+    private_key = profile.private_key
+
+    nonce  = web3.eth.getTransactionCount(account_1)
+    ethereum_amount = convert_to_ether(int(request.POST.get('amount')))
+    print("Amount in Ethereum: ", ethereum_amount)
+
+    tx = {
+        'nonce':nonce,
+        'to':account_2,
+        'value':web3.toWei(ethereum_amount,'ether'),
+        'gas':2000000, 
+        'gasPrice':web3.toWei(50,'gwei')
+    }
+
+
+    print(web3.fromWei(web3.eth.get_balance(account_1),'ether'))
+
+    signed_tx = web3.eth.account.signTransaction(tx,private_key)
+    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    print("Transaction hash :::::::: ",tx_hash)
+
+    with open("donation.sol", "r") as file:
+        contact_list_file = file.read()
+
+    compiled_sol = compile_standard(
+    {
+        "language": "Solidity",
+        "sources": {"ContactList.sol": {"content": contact_list_file}},
+        "settings": {
+            "outputSelection": {
+                "*": {
+                    "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"] # output needed to interact with and deploy contract 
+                }
+            }
+        },
+    },
+    solc_version="0.8.0",
+)
+# print(compiled_sol)
+    with open("donation_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    bytecode = compiled_sol["contracts"]["ContactList.sol"]["Donations"]["evm"]["bytecode"]["object"]
+    abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Donations"]["metadata"])["output"]["abi"]
+
+
+    chain_id = 1337
+    address = "0x800A3BF5d9C6e42fFe4A57c7968618DdE81fd7cA"
+    private_key = "e0a9f2f78b2dca326b4116744b422d2ba1ba5c15392492c3c45a2e3fbe9021b0" # leaving the private key like this is very insecure if you are working on real world project
+    # Create the contract in Python
+    ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
+    # Get the number of latest transaction
+    nonce = w3.eth.getTransactionCount(address)
+
+    transaction = ContactList.constructor().buildTransaction(
+        {
+            "chainId": chain_id,
+            "gasPrice": w3.eth.gas_price,
+            "from": address,
+            "nonce": nonce,
+        }
+    )
+    # Sign the transaction
+    sign_transaction = w3.eth.account.sign_transaction(transaction, private_key=private_key)
+    print("Deploying Contract!")
+    # Send the transaction
+    transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
+    # Wait for the transaction to be mined, and get the transaction receipt
+    print("Waiting for transaction to finish...")
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(transaction_hash)
+    print(f"Done! Contract deployed to {transaction_receipt.contractAddress}")
+    
+    user_donation = User.objects.filter(username = request.user.username).first()
+    post = Event.objects.filter(pk = request.POST.get('pk')).first()
+    eventHost = userProfile.objects.filter(user = post.user).first()
+    block = Donation.objects.create(user= user,transaction_address = str(transaction_receipt.contractAddress),event = post)
+
+    contact_list = w3.eth.contract(address=transaction_receipt.contractAddress, abi=abi)
+    store_contact = contact_list.functions.addDonation(
+        request.POST.get('pk'),request.POST.get('amount'),eventHost.user.username,eventHost.account_address
+    ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
+
+    # Sign the transaction
+    sign_store_contact = w3.eth.account.sign_transaction(
+        store_contact, private_key=private_key
+    )
+    # Send the transaction
+    send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
+
+    print(contact_list.functions.retrieve().call())
+    return JsonResponse({"success":1})
+
+def tracking(request,pk):
+    event = Event.objects.filter(pk=pk).first()
+    donations = Donation.objects.filter(event = event,user = request.user)
+
+    #for account address ------------------>>>>>>>>>>>>
+
+    account = Account.objects.filter(event = event).first()
+
+    with open("account.sol", "r") as file:
+        contact_list_file = file.read()
+
+
+    compiled_sol = compile_standard(
+        {
+            "language": "Solidity",
+            "sources": {"ContactList.sol": {"content": contact_list_file}},
+            "settings": {
+                "outputSelection": {
+                    "*": {
+                        "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"] # output needed to interact with and deploy contract 
+                    }
+                }
+            },
+        },
+        solc_version="0.8.0",
+    )
+    # print(compiled_sol)
+    with open("account_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    bytecode = compiled_sol["contracts"]["ContactList.sol"]["Account"]["evm"]["bytecode"]["object"]
+    abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Account"]["metadata"])["output"]["abi"]
+
+    # For connecting to ganache
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
+    test = w3.eth.contract(address=account.transaction_address, abi=abi)
+    print(test.functions.retrieve().call())
+
+    result_address = test.functions.retrieve().call()
+    print("result",result_address[0][3])
+
+    #_____________________for donation ___________________________
+
+    with open("donation.sol", "r") as file:
+            contact_list_file = file.read()
+
+    compiled_sol = compile_standard(
+    {
+        "language": "Solidity",
+        "sources": {"ContactList.sol": {"content": contact_list_file}},
+        "settings": {
+            "outputSelection": {
+                "*": {
+                    "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"] # output needed to interact with and deploy contract 
+                }
+            }
+        },
+    },
+    solc_version="0.8.0",
+)
+# print(compiled_sol)
+    with open("donation_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    bytecode = compiled_sol["contracts"]["ContactList.sol"]["Donations"]["evm"]["bytecode"]["object"]
+    abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Donations"]["metadata"])["output"]["abi"]
+
+    amounts = []
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    sumAmt = 0
+    for donation in donations:
+        
+        test = w3.eth.contract(address= donation.transaction_address, abi=abi)
+        print(test.functions.retrieve().call())
+
+        result = test.functions.retrieve().call()
+        print("result",result[0][1])
+        
+        amt = {'username':account.username,"amount":int(result[0][1]),"address":result_address[0][3],"date":donation.date}
+        amounts.append(amt)
+
+    
+    return render(request,'tracking.html',{"amounts":amounts})
 
 
 def blog(request):
@@ -472,3 +698,86 @@ def getDonationDetails(address):
     return result
 
 
+def sendDonation(request):
+    with open("track.sol", "r") as file:
+        contact_list_file = file.read()
+
+    from solcx import compile_standard, install_solc
+    install_solc('0.8.0')
+    import json #to save the output in a JSON file
+
+    compiled_sol = compile_standard(
+        {
+            "language": "Solidity",
+            "sources": {"ContactList.sol": {"content": contact_list_file}},
+            "settings": {
+                "outputSelection": {
+                    "*": {
+                        "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"] # output needed to interact with and deploy contract 
+                    }
+                }
+            },
+        },
+        solc_version="0.8.0",
+    )
+
+    # print(compiled_sol)
+    with open("track_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    bytecode = compiled_sol["contracts"]["ContactList.sol"]["Track"]["evm"]["bytecode"]["object"]
+    abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Track"]["metadata"])["output"]["abi"]
+
+    from web3 import Web3
+
+    # For connecting to ganache
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    chain_id = 1337
+    address = "0xCCa4ADE6A069A1229F06f36682bDfdB060DaE65F"
+    private_key = "71335f2253f2f60d19830aa04be9f94fdc26b479b8513b50c43ef6297d549f06" # leaving the private key like this is very insecure if you are working on real world project
+    # Create the contract in Python
+    ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
+    # Get the number of latest transaction
+    nonce = w3.eth.getTransactionCount(address)
+
+    transaction = ContactList.constructor().buildTransaction(
+        {
+            "chainId": chain_id,
+            "gasPrice": w3.eth.gas_price,
+            "from": address,
+            "nonce": nonce,
+        }
+    )
+    # Sign the transaction
+    sign_transaction = w3.eth.account.sign_transaction(transaction, private_key=private_key)
+    print("Deploying Contract!")
+    # Send the transaction
+    transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
+    # Wait for the transaction to be mined, and get the transaction receipt
+    print("Waiting for transaction to finish...")
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(transaction_hash)
+    print(f"Done! Contract deployed to {transaction_receipt.contractAddress}")
+    donation = Donation.objects.filter(pk = request.POST.get('pk')).first()
+    details = getDonationDetails(donation.transaction_address)
+    contact_list = w3.eth.contract(address=transaction_receipt.contractAddress, abi=abi)
+    store_contact = contact_list.functions.addTrackRecord(
+        details[0][0],details[0][0],"_educationalInfo","_educationalInfo"
+    ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
+
+    # Sign the transaction
+    sign_store_contact = w3.eth.account.sign_transaction(
+        store_contact, private_key=private_key
+    )
+    # Send the transaction
+    send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
+
+    print(contact_list.functions.getTrackingDetails().call())
+
+    # used to get data from blockchain
+    test = w3.eth.contract(address="0x6AeD2CE87BAAcd4dDf179bFdC9aC079d3A1b347E", abi=abi)
+    print(test.functions.getTrackingDetails().call())
+
+    result = test.functions.getTrackingDetails().call()
+    print("result",result[0])
+    return JsonResponse({"result":1})
