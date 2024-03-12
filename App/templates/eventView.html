@@ -80,17 +80,17 @@
             {% if selfPost == 0 %}
             <div class="input">
                 <input type="number" placeholder="Donation amount in Rs" class="amount">
-                <button >Donate now</button>
+                <button onclick="donate('{{event.user.username}}','{{event.pk}}')">Donate now</button>
             </div>
             
             {% if donation %}
-            <a href="" style="width: 97.4%;margin-left: 30px;"><button style="width: 95%;padding: 10px;background-color: #2d9a63;color: rgb(255, 255, 255);border: 2px solid #2d9a63;outline: none;font-size: 17px;margin-top: 20px;cursor: pointer;">Track My Donation</button></a>
+            <a href="{% url 'tracking' pk=event.pk %}" style="width: 97.4%;margin-left: 30px;"><button style="width: 95%;padding: 10px;background-color: #2d9a63;color: rgb(255, 255, 255);border: 2px solid #2d9a63;outline: none;font-size: 17px;margin-top: 20px;cursor: pointer;">Track My Donation</button></a>
 
             {% endif %}
             <h3 style="font-weight: 500;margin-top: 15px;text-align: center;display: none;" class="thanks">🎊 THANKYOU FOR YOUR DONATION 🎊</h3>
             {% else %}
 
-            <a href="" style="width: 97%;margin-left: 25px;"><button style="width: 95%;padding: 10px;background-color: #2d9a63;color: rgb(255, 255, 255);border: 2px solid #2d9a63;outline: none;font-size: 17px;margin-top: 20px;cursor: pointer;">SHOW ALL DONATIONS</button></a>
+            <a href="{% url 'charityDonation' pk=event.pk %}" style="width: 97%;margin-left: 25px;"><button style="width: 95%;padding: 10px;background-color: #2d9a63;color: rgb(255, 255, 255);border: 2px solid #2d9a63;outline: none;font-size: 17px;margin-top: 20px;cursor: pointer;">SHOW ALL DONATIONS</button></a>
 
 
             {% endif %}

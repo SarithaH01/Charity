@@ -7,11 +7,11 @@ from django.db.models import Q
 
 from django.contrib.auth.models import User
 from .models import userProfile,Event,Donation,Account,Blog
-from web3 import Web3              
+from web3 import Web3              #a library used to interact with ganache
 
 from django.core.files.storage import FileSystemStorage
 
-ganache_url = "HTTP://127.0.0.1:7545"
+ganache_url = "HTTP://127.0.0.1:7545"  #url of ganache
 
 
 accounts_list = [{"address":"0xA0CFA7cA389f0b6CfCAc8FDA6E99aa2E624Dd788","private_key":"0x0ed987e3c5075e209f949a0823329ba0951f6b99e46f7682e5a0c82f4f30de25"},{"address":"0xd9aE87042D59B742f44a48982cf2691Ff5A88918","private_key":"0xabfd7d84417ccdbc6665e859c6ec4e5451f5e54ffecf5d2a03184326a4d0bdf0"},{"address":"0xe6160e47bbe9FF8014C9a35607ddA403421F44cE","private_key":"0x9a7063fe793bd3c36afbe06f3344de2776b057ad1bf2828a69932085361f4c9b"}]
@@ -153,11 +153,11 @@ def donations(request):
     abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Donations"]["metadata"])["output"]["abi"]
 
 
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))         # initializes a connection to the Ethereum blockchain using the Web3 library
     events_all =[]
     
     print("[+] Events : ",events)
-    for event in events:
+    for event in events:                # to pass all the details stored in blockchain to frontend
         # remaining =0
         sumAmt = 0
         donations = Donation.objects.filter(event = event)
@@ -185,16 +185,16 @@ def donations(request):
     return render(request,'donation.html',{"events":events_all,"profile":profile})
 
 
-def createEvent(request):
+def createEvent(request):                                   # a fn to create event
     user = User.objects.filter(username = request.user.username).first()
     print(user)
     event = Event.objects.create(title = request.POST.get('title'),description = request.POST.get('description'),image = request.FILES['image'],phone = request.POST.get('phone'),address = request.POST.get('address'),user = user, goal = request.POST.get('goal'),hashtag = request.POST.get('hashtag'))
     
-    with open("account.sol", "r") as file:
-        contact_list_file = file.read()
+    with open("account.sol", "r") as file:              #to open sol file in python
+        contact_list_file = file.read()                 
 
 
-    compiled_sol = compile_standard(
+    compiled_sol = compile_standard(                    # to convert the sol file to python readable file and create a json file(account_code.json)
         {
             "language": "Solidity",
             "sources": {"ContactList.sol": {"content": contact_list_file}},
@@ -209,7 +209,7 @@ def createEvent(request):
         solc_version="0.8.0",
     )
     # print(compiled_sol)
-    with open("account_code.json", "w") as file:
+    with open("account_code.json", "w") as file:        # open the created json file
         json.dump(compiled_sol, file)
 
     bytecode = compiled_sol["contracts"]["ContactList.sol"]["Account"]["evm"]["bytecode"]["object"]
@@ -218,14 +218,14 @@ def createEvent(request):
     from web3 import Web3
 
     # For connecting to ganache
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))           # initializes a connection to the Ethereum blockchain using the Web3 library
     chain_id = 1337
     address = "0x6F8aBFe472811A714f512af550d4c316781d1672"
     private_key = "0xe304b4545f051170df21ea50196c5e74ea8cb6457b80a8c1ff5b3775f8331a52" # leaving the private key like this is very insecure if you are working on real world project
     
-    ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
+    ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)            # read all details from the contract then store it in ContactList
     
-    nonce = w3.eth.get_transaction_count(address)
+    nonce = w3.eth.get_transaction_count(address)   # numb only used once
 
     transaction = ContactList.constructor().build_transaction(
         {
