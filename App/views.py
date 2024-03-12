@@ -185,7 +185,7 @@ def donations(request):
     return render(request,'donation.html',{"events":events_all,"profile":profile})
 
 
-def createEvent(request):                                   # a fn to create event
+def createEvent(request):                                   
     user = User.objects.filter(username = request.user.username).first()
     print(user)
     event = Event.objects.create(title = request.POST.get('title'),description = request.POST.get('description'),image = request.FILES['image'],phone = request.POST.get('phone'),address = request.POST.get('address'),user = user, goal = request.POST.get('goal'),hashtag = request.POST.get('hashtag'))
