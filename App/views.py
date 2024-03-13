@@ -13,7 +13,7 @@ from django.core.files.storage import FileSystemStorage
 ganache_url = "HTTP://127.0.0.1:7545"
 
 
-accounts_list = [{"address":"0x9427D625b67E74F4Bd8DFB297507F49b7718777f","private_key":"9f8b43a8e16dca8f6ada734e6709e4613ee5ea8474ccd28621cd37daf2795b25"},{"address":"0x6fc6799BDF2cd05F97c3E25e2B5b14fD5C5A6691","private_key":"0153ba07a1fc8e859619ae09be74e585bc3b2f2951235d98ad9c92a5b21cf1e8"},{"address":"0x8E6C22e5a29FA4f3f5B5bC1f6C48b0bcF60d2E2a","private_key":"22da6c21ca966aa4294814d83f56da586f739c7a95b3d036c8a8c971d56da16f"}]
+accounts_list = [{"address":"0x5Ce706b63fb84b93F076c9333d6BE73Ab39e20c8","private_key":"0xc9cfb7f337ea194a7dca7b4f02017d3b6af897b57fd1f45c598bd28acc1af584"},{"address":"0xC606BFEB496E26C3554Be0B92cFa66C29f6F7689","private_key":"0xb93d102fbce92d33f328f6afa6835277dfe7ab6c08c9905e9260ea70c8f4a3fc"},{"address":"0xf4C425a4592e88f9ABc2b780F1379dcd50188aBE","private_key":"0xbe323aeed2bb680e6c868bec281d9f2ffc217aabb5c54c5c5a3e880b784b5245"}]
 
 # print(accounts_list)
 
@@ -219,8 +219,8 @@ def createEvent(request):
     # For connecting to ganache
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
-    address = "0x800A3BF5d9C6e42fFe4A57c7968618DdE81fd7cA"
-    private_key = "e0a9f2f78b2dca326b4116744b422d2ba1ba5c15392492c3c45a2e3fbe9021b0" # leaving the private key like this is very insecure if you are working on real world project
+    address = "0x59512AC008Dfa083A21A2ebeeF5aadc41eD12fE7"
+    private_key = "0xff6ce83c23154d1fe3fe4a65202d284963a7937a120646c01f70a019b35bd77a" # leaving the private key like this is very insecure if you are working on real world project
     # Create the contract in Python
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
     # Get the number of latest transaction
@@ -434,8 +434,8 @@ def donate(request):
 
 
     chain_id = 1337
-    address = "0x800A3BF5d9C6e42fFe4A57c7968618DdE81fd7cA"
-    private_key = "e0a9f2f78b2dca326b4116744b422d2ba1ba5c15392492c3c45a2e3fbe9021b0" # leaving the private key like this is very insecure if you are working on real world project
+    address = "0x59512AC008Dfa083A21A2ebeeF5aadc41eD12fE7"
+    private_key = "0xff6ce83c23154d1fe3fe4a65202d284963a7937a120646c01f70a019b35bd77a" # leaving the private key like this is very insecure if you are working on real world project
     # Create the contract in Python
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
     # Get the number of latest transaction
@@ -733,8 +733,8 @@ def sendDonation(request):
     # For connecting to ganache
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
-    address = "0xCCa4ADE6A069A1229F06f36682bDfdB060DaE65F"
-    private_key = "71335f2253f2f60d19830aa04be9f94fdc26b479b8513b50c43ef6297d549f06" # leaving the private key like this is very insecure if you are working on real world project
+    address = "0x59512AC008Dfa083A21A2ebeeF5aadc41eD12fE7"
+    private_key = "0xff6ce83c23154d1fe3fe4a65202d284963a7937a120646c01f70a019b35bd77a" # leaving the private key like this is very insecure if you are working on real world project
     # Create the contract in Python
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
     # Get the number of latest transaction
