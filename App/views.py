@@ -224,9 +224,9 @@ def createEvent(request):
     # Create the contract in Python
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
     # Get the number of latest transaction
-    nonce = w3.eth.getTransactionCount(address)
+    nonce = w3.eth.get_transaction_count(address)
 
-    transaction = ContactList.constructor().buildTransaction(
+    transaction = ContactList.constructor().build_transaction(
         {
             "chainId": chain_id,
             "gasPrice": w3.eth.gas_price,
@@ -248,15 +248,15 @@ def createEvent(request):
     contact_list = w3.eth.contract(address=transaction_receipt.contractAddress, abi=abi)
     store_contact = contact_list.functions.addAccount(
         str(event.pk),request.POST.get('accAddress'),request.POST.get('beneficiary'),str(eventHost.account_address)
-    ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
+    ).build_transaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
 
     # Sign the transaction
     sign_store_contact = w3.eth.account.sign_transaction(
         store_contact, private_key=private_key
     )
     # Send the transaction
-    send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
-    transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
+    # send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
+    # transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
     # test = w3.eth.contract(address= str(transaction_receipt.contractAddress), abi=abi)
     # print("[+] Details : ",test.functions.retrieve().call())
     return HttpResponseRedirect(reverse('homepage'))
@@ -389,7 +389,7 @@ def donate(request):
 
     private_key = profile.private_key
 
-    nonce  = web3.eth.getTransactionCount(account_1)
+    nonce  = web3.eth.get_transaction_count(account_1)
     ethereum_amount = convert_to_ether(int(request.POST.get('amount')))
     print("Amount in Ethereum: ", ethereum_amount)
 
@@ -439,9 +439,9 @@ def donate(request):
     # Create the contract in Python
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
     # Get the number of latest transaction
-    nonce = w3.eth.getTransactionCount(address)
+    nonce = w3.eth.get_transaction_count(address)
 
-    transaction = ContactList.constructor().buildTransaction(
+    transaction = ContactList.constructor().build_transaction(
         {
             "chainId": chain_id,
             "gasPrice": w3.eth.gas_price,
@@ -467,7 +467,7 @@ def donate(request):
     contact_list = w3.eth.contract(address=transaction_receipt.contractAddress, abi=abi)
     store_contact = contact_list.functions.addDonation(
         request.POST.get('pk'),request.POST.get('amount'),eventHost.user.username,eventHost.account_address
-    ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
+    ).build_transaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
 
     # Sign the transaction
     sign_store_contact = w3.eth.account.sign_transaction(
@@ -738,9 +738,9 @@ def sendDonation(request):
     # Create the contract in Python
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
     # Get the number of latest transaction
-    nonce = w3.eth.getTransactionCount(address)
+    nonce = w3.eth.get_transaction_count(address)
 
-    transaction = ContactList.constructor().buildTransaction(
+    transaction = ContactList.constructor().build_transaction(
         {
             "chainId": chain_id,
             "gasPrice": w3.eth.gas_price,
@@ -762,7 +762,7 @@ def sendDonation(request):
     contact_list = w3.eth.contract(address=transaction_receipt.contractAddress, abi=abi)
     store_contact = contact_list.functions.addTrackRecord(
         details[0][0],details[0][0],"_educationalInfo","_educationalInfo"
-    ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
+    ).build_transaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
 
     # Sign the transaction
     sign_store_contact = w3.eth.account.sign_transaction(
