@@ -120,8 +120,8 @@
                 </tr>
                 
                 {% for amount in amounts %}
+                {% if not amount.sent %}
                 <tr>
-                    
                     <td style="display: flex;justify-content: flex-start;align-items: flex-start;gap: 15px;padding-left: 25px;width: 200px;">
                         <img src="{{amount.image}}" alt="" style="width: 30px;height: 30px;border-radius: 100px;object-fit: cover;">
                         <div style="text-align: left;">
@@ -129,13 +129,14 @@
                             <!-- <p style="font-size: 13px;font-weight: 500;">Phone Number : 754858689</p> -->
                         </div>
                     </td>
-                    <td style="text-align: center;font-size: 14px;">{{amount.amount}}</td>
+                    <td style="text-align: center;font-size: 14px;" class="amt">{{amount.amount}}</td>
                     <td style="text-align: center;font-size: 14px;">{{amount.date}}</td>
-                    <td><button style="padding: 7px;background-color: #2d9a63;color: white;border: none;outline: none;border-radius: 5px;cursor: pointer;" onclick="sendDonation('{{amount.pk}}',this)">Send Donation</button></td>
+                    <td><button style="padding: 7px;background-color: #2d9a63;color: white;border: none;outline: none;border-radius: 5px;cursor: pointer;" onclick="sendDonation('{{amount.pk}}',this,this.parentNode.parentNode,'{{amount.eventPk}}')">Send Donation</button></td>
                     
 
                     <!-- <td style="font-weight: 400;"><button style="padding: 10px;background-color: #2d919a;color: white;font-weight: 400;width: 120px;border: none;outline: none;">Send Amount</button></td> -->
                 </tr>
+                {% endif %}
 
                 {% endfor %}
                 
@@ -362,12 +363,13 @@
         document.querySelector('.donation-details').style.display = "flex"
     }
 
-    function sendDonation(pk,element){
+    function sendDonation(pk,element1,element,eventPk){
         var data = new FormData()
 
         data.append("pk", pk)
+        data.append("amount", element.querySelector('.amt').innerText)
         // data.append("password", document.querySelector('.password').value)
-
+        data.append("event-pk", eventPk)
 
         data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
         
@@ -382,8 +384,8 @@
             data:data,
             success:function(res){
                 
-                element.innerText = "Sent"
-
+                element1.innerText = "Sent"
+                element1.style.pointerEvents = "none"
             }
         })
     

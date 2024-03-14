@@ -57,12 +57,13 @@
         <div class="navbar" style="z-index: 150;">
             <img src="{% static 'images/logo_1.svg' %}" alt="">
             <div class="link">
-                <a href="index.html">HOME</a>
-                <a href="about.html">ABOUT</a>
+                <a href="{% url 'homepage' %}">HOME</a>
+                <!-- <a href="">ABOUT</a> -->
                 <a href="{% url 'donation' %}">DONATIONS</a>
-                <a href="">BLOG</a>
+                <a href="{% url 'blog' %}">BLOG</a>
+                <a href="{% url 'blood' %}">DONATE BLOOD</a>
                 <!-- <a href="">PAGES</a> -->
-                <a href="">CONTACTS</a>
+                <!-- <a href="">CONTACTS</a> -->
             </div>
             <div class="icons">
                 <h2 style="opacity: 0;pointer-events: none;"><ion-icon name="bag-handle-outline"></ion-icon></h2>
@@ -72,6 +73,9 @@
             <!-- <button style="background-color: #e8e8e8;color: black;" >Login</button> -->
            
             <a onclick="showEvent()"><button style="background-color: #429c51;color: rgb(255, 255, 255);">CREATE EVENT</button></a>
+            {% else %}
+            <a href="{% url 'logout' %}"><button style="background-color: #e8e8e8;color: black;">Logout</button></a>
+
             {% endif %}
            
         </div>

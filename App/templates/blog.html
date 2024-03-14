@@ -10,7 +10,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
 <body style="overflow-x: hidden;" class="body">
+    <form class="create-view" action="{% url 'createBlog' %}" method="post" enctype="multipart/form-data" style="display: none;">
+        {% csrf_token %}
+        <!-- <img src="https://codercredit.com/tf/gainioz/image/illus/hero-bg-thumb-2.png" alt="" style="position: absolute;z-index: 0;opacity: 0.1;width: 100%;top: 20px;"> -->
+        <div class="event-wrap" style="position: absolute;top: 0px;margin-top: 120px;">
+
+        <img src="https://codercredit.com/tf/gainioz/image/illus/hero-bg-thumb-2.png" alt="" style="position: absolute;z-index: 0;opacity: 0.2;width: 100%;top: 0px;height: 100%;object-fit: cover;">
+
+        <h1 style="position: absolute;top: -25px;right: 25px;color: white;cursor: pointer;font-size: 29px;" onclick="closeCreate()"><i class="fa-solid fa-xmark"></i></h1>
+        <img src="https://cdn.pixabay.com/photo/2020/12/25/22/03/merry-christmas-5860209__340.jpg" alt="" class="post-img1 profile-pic" style="height: 250px;width: 100%;object-fit: cover;">
+
+        <!-- <p style="color: white;margin-bottom: 35px;">Create Event</p> -->
+        <div style="display: flex;justify-content: center;align-items: center;gap: 25px;margin-bottom: 25px;margin-top: -10px;position: absolute;top: 200px;right: 25px;">
+            <!-- <img src="https://codercredit.com/tf/gainioz/image/featured/featuredThumb4.jpg" alt="" style="width: 250px;height: 120px;border-radius: 10px;object-fit: cover;"> -->
+            <h3 style="position: relative;width: 120px;padding: 8px;background-color: #a47836;border-radius: 0px;color: white;font-size: 15px;text-align: center;font-weight: 500;cursor: pointer;"> <input type="file" name="image" id="file" style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;opacity: 0;" class="file" required onchange="setProfilePic(this)"> Choose Blog Image</h3>
+        </div>
+
+            <h3 style="margin-top: 15px;">CREATE BLOG</h3>
+       
+            <input type="text" name="title" id="" required placeholder="Blog Title" style="width: 90%;margin-bottom: 15px;margin-top: 25px;position: relative;background-color: white;">
+            <input type="text" name="desc" id="" required placeholder="Blog description" style="width: 90%;margin-bottom: 15px;position: relative;background-color: white;">
+            <input type="text" name="category" id="" required placeholder="Hashtag e.g #Life" style="width: 90%;margin-bottom: 15px;position: relative;background-color: white;">
+
+
     
+        
+
+        <button type="submit" class="donate-btn">Create Blog</button>
+        </div>
+    </form>
+
     <div class="event-view" style="z-index: 1500;">
         <h2 style="width: 50px;height: 50px;background-color: #262626;color: white;display: flex;justify-content: center;align-items: center;position: fixed;top: 25px;left: 25px;cursor: pointer;" onclick="back()"><i class="fa-solid fa-arrow-left"></i></h2>
         <div class="event-wrap" style="margin-top:80px;">
@@ -24,7 +53,7 @@
                 </div>
             </div>
             <img src="https://codercredit.com/tf/gainioz/image/illus/hero-bg-thumb-2.png" alt="" style="position: absolute;z-index: 0;opacity: 0.2;width: 100%;top: 300px;">
-            <h1 class="title">{{event.title}}</h1>
+            <h1 class="title" >{{event.title}}</h1>
             <p class="description">{{event.description}}</p>
              
 
@@ -39,12 +68,12 @@
         <div class="navbar" style="z-index: 150;">
             <img src="{% static 'images/logo_1.svg' %}" alt="">
             <div class="link">
-                <a href="index.html">HOME</a>
-                <a href="about.html">ABOUT</a>
+                <a href="{% url 'homepage' %}">HOME</a>
                 <a href="{% url 'donation' %}">DONATIONS</a>
                 <a href="{% url 'blog' %}">BLOG</a>
                 <!-- <a href="">PAGES</a> -->
-                <a href="">CONTACTS</a>
+                <a  style="opacity: 0;user-select: none;pointer-events: none;">ABOUT</a>
+                <a href="" style="opacity: 0;user-select: none;pointer-events: none;">CONTACTS</a>
             </div>
             <div class="icons">
                 <h2 style="opacity: 0;pointer-events: none;"><ion-icon name="bag-handle-outline"></ion-icon></h2>
@@ -54,8 +83,9 @@
             <!-- <button style="background-color: #e8e8e8;color: black;" >Login</button> -->
             <button onclick="showLogin()" style="margin-left: -80px;">Login</button>
             {% else %}
-            <a href="{% url 'logout' %}"><button style="background-color: #e8e8e8;color: black;">Logout</button></a>
-
+            {% if profile.is_an_organization %}
+            <a onclick="showCreate()"><button style="background-color: #e8e8e8;color: black;" onclick="showCreateBlog()">Create Blog</button></a>
+            {% endif %}
             {% endif %}
         </div>
         <div class="banner">
@@ -90,7 +120,7 @@
                     <p style="font-weight: 500;font-size: 13px;" class="bdate">{{blog.date}}</p>
                 </div>
 
-                <h3 style="font-weight: 500;line-height: 30px;" class="btitle">{{blog.title}}</h3>
+                <h3 style="font-weight: 500;line-height: 30px;height: 30px;overflow: hidden;" class="btitle">{{blog.title}}</h3>
                 <p style="line-height: 30px;opacity: 0.7;margin-top: 10px;height: 60px;overflow: hidden;" class="bdesc">{{blog.desc}}</p>
 
                 <button style="width: 100%;padding: 10px;border: 2px solid rgb(230, 230, 230);background-color: rgb(238, 238, 238);outline: none;margin-top: 15px;font-size: 17px;cursor: pointer;" onclick="showBlog(this.parentNode)">view more</button>
@@ -100,9 +130,11 @@
         </div>
         
     </div>
+    <script src="{% static 'js/index.js' %}"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
    <script>
      function showBlog(element){
         document.querySelector('.event-view').style.display = "flex"
@@ -119,6 +151,33 @@
         document.querySelector('.event-view').style.display = "none"
         document.querySelector('.body').style.overflowY = "scroll"
     }
+
+    function setProfilePic(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    // document.querySelector('.profile-pic').style.display = "flex"
+                    // document.querySelector('.profile-pic-name').textContent = input.value.replace("C:\\fakepath\\","")
+                    $('.profile-pic')
+                        .attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+
+            // document.querySelector('.chooseImg').style.backgroundColor ="#06af50"
+            // document.querySelector('.chooseImg').style.color ="#fff"
+            // document.querySelector('.chooseImg').style.border ="2px soild #06af50"
+        }
+
+        function showCreateBlog(){
+            document.querySelector('.create-view').style.display = "flex"
+        }
+
+        function closeCreate(){
+            document.querySelector('.create-view').style.display = "none"
+        }
 
    </script>
 </body>

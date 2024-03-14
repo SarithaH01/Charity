@@ -1,31 +1,88 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Donations {
+contract Event {
     
-    
-    struct Donation {
+
+    struct eventDetails {
         
         
-        string pk;
+        string bname;
+        string date;
+        string baccountAddress;
         string amount;
-        string name;
-        string accAddress;
+        string caccountAddress;
+    }
+
+    eventDetails[] public EventDetails; 
+     
+   
+    function getEventDetails() public view returns (eventDetails[] memory){
+        return EventDetails; 
+    }
+
+    function addEventDetails(string memory _bname ,string memory _date,string memory _baccount,string memory _amount,string memory _caccount) public {
+        EventDetails.push(eventDetails(_bname, _date,_baccount,_amount,_caccount)); //append to  Contact[] array
        
     }
 
-    Donation[] public DonationDetails; 
-     
-    function retrieve() public view returns (Donation[] memory){
-        return DonationDetails; 
-    }
-    
-    function addDonation(string memory _pk,string memory _amount,string memory _name,string memory _accAddress) public {
-        DonationDetails.push(Donation(_pk,_amount,_name,_accAddress)); //append to  Contact[] array
-        // nameToPhoneNumber[_name] = _phoneNumber; //use name to get phone number
-    }
+
     
 }
 
 
+contract EventDonation{
+
+    struct Donation {
+        
+        string fromName;
+        string toName; //charity name
+        string date;
+        string accountAddress;
+        string amount;
+ 
+    }
+    
+    Donation[] public donationDetails; 
+
+    function getDonationDetails() public view returns (Donation[] memory){
+        return donationDetails; 
+    }
+
+    function addDonationDetails(string memory _fromName ,string memory _toName,string memory _date,string memory _account,string memory _amount) public {
+        donationDetails.push(Donation(_fromName, _toName,_date,_account,_amount)); //append to  Contact[] array
+       
+    }
+
+
+
+}
+
+
+contract DonationTracking{
+
+    struct Track {
+        
+        string bName;
+        string fName; //charity name
+        string date;
+        string accountAddress;
+        string amount;
+ 
+    }
+
+       
+
+    Track[] public trackingDetails; 
+
+    function getTrackingDetails() public view returns (Track[] memory){
+        return trackingDetails; 
+    }
+
+    function addTrackingDetails(string memory _bName ,string memory _fName,string memory _date,string memory _account,string memory _amount) public {
+        trackingDetails.push(Track(_bName, _fName,_date,_account,_amount)); //append to  Contact[] array
+       
+    }
+
+}
 

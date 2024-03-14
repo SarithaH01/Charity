@@ -26,6 +26,8 @@
             <button onclick="sendData()">Login into my account</button>
             <h4 style="font-weight: 500;">OR</h4>
             <button onclick="showSignup()" style="background-color: #e8e8e8;color: rgb(26, 26, 26);">create a new account</button>
+            <button onclick="showSignupCharity()" style="background-color: #e8e8e8;color: rgb(26, 26, 26);">Charity organization signup</button>
+
         </div>
     </div>
 
@@ -37,8 +39,8 @@
             <!-- <h1  style="color: black;font-size: 18px;color: rgb(31, 31, 31);">Signup</h1> -->
             <p style="color: rgb(50, 50, 50);">Create your new account now</p>
             <div style="display: flex;justify-content: center;align-items: center;gap: 25px;margin-bottom: 15px;">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaUTp3j_LpF5r5_gNdvW0g7p057ExdcHWbUQ&usqp=CAU" alt="" style="width: 60px;height: 60px;border-radius: 100px;object-fit: cover;">
-                <h3 style="position: relative;width: 120px;padding: 8px;background-color: #a47836;border-radius: 8px;color: white;font-size: 15px;text-align: center;font-weight: 500;"> <input type="file" name="" id="file" style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;opacity: 0;" class="file" required> Choose Image</h3>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaUTp3j_LpF5r5_gNdvW0g7p057ExdcHWbUQ&usqp=CAU" alt="" style="width: 60px;height: 60px;border-radius: 100px;object-fit: cover;" class="profile-pic">
+                <h3 style="position: relative;width: 120px;padding: 8px;background-color: #a47836;border-radius: 8px;color: white;font-size: 15px;text-align: center;font-weight: 500;"> <input type="file" name="" id="file" style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;opacity: 0;" class="file" required onchange="setProfilePic(this)"> Choose Image</h3>
             </div>
             <div class="inputs inps">
                 <input type="text" placeholder="username" class="username1"><br>
@@ -54,16 +56,46 @@
         </div>
     </div>
 
+    <div class="signup-wrapper-charity">
+        <div class="main" style="width: 250px;">
+            <h2 style="position: absolute;top: 20px;right: 20px;color: rgb(0, 0, 0);font-size: 15px;" onclick="closeSignupCharity()"><i class="fa-solid fa-x" style="color: rgb(32, 32, 32);"></i></ion-icon></h2>
+            <img src="{% static 'images/logo_1.svg' %}" alt="" style="width: 130px;transform: rotate(0deg); margin-bottom: 28px;margin-top: 25px;">
+            
+            <!-- <h1  style="color: black;font-size: 18px;color: rgb(31, 31, 31);">Signup</h1> -->
+            <p style="color: rgb(50, 50, 50);">Create your new account now</p>
+            <div style="display: flex;justify-content: center;align-items: center;gap: 25px;margin-bottom: 15px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaUTp3j_LpF5r5_gNdvW0g7p057ExdcHWbUQ&usqp=CAU" alt="" style="width: 60px;height: 60px;border-radius: 100px;object-fit: cover;" class="profile-pic2">
+                <h3 style="position: relative;width: 120px;padding: 8px;background-color: #a47836;border-radius: 8px;color: white;font-size: 15px;text-align: center;font-weight: 500;"> <input type="file" name="" id="file1" style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;opacity: 0;" class="file1" required onchange="setProfilePic2(this)"> Choose Image</h3>
+            </div>
+            <div class="inputs inps">
+                <input type="text" placeholder="Organization name" class="username2"><br>
+                <input type="email" placeholder="email address" class="email2"><br>
+                <input type="number" placeholder="phone number" class="phone2">
+                <input type="text" placeholder="Address" class="address2"><br>
+
+                <input type="password" placeholder="password" class="password2"><br>
+            </div>
+            <p style="margin-top: -7px;color: rgb(235, 66, 66);opacity: 1;width: 100%;text-align: center;display: none;font-size: 15px;justify-content: center;align-items: center;margin-bottom: 15px;" class="err3">Organization name already exists</p>
+
+            <button onclick="checkSignupCharity()">Create a new account account</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="navbar" style="z-index: 150;">
             <img src="{% static 'images/logo_1.svg' %}" alt="">
             <div class="link">
-                <a href="index.html">HOME</a>
-                <a href="about.html">ABOUT</a>
+                <a style="cursor: pointer;">HOME</a>
+                <a onclick="about()" style="cursor: pointer;">ABOUT</a>
+                {% if request.user.is_authenticated %}
                 <a href="{% url 'donation' %}">DONATIONS</a>
+                {% endif %}
                 <a href="{% url 'blog' %}">BLOG</a>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'shop' %}">SHOP</a>
+                {% endif %}
                 <!-- <a href="">PAGES</a> -->
-                <a href="">CONTACTS</a>
+                <!-- <a onclick="contact()" style="cursor: pointer;">CONTACT US</a> -->
             </div>
             <div class="icons">
                 <h2 style="opacity: 0;pointer-events: none;"><ion-icon name="bag-handle-outline"></ion-icon></h2>
@@ -138,18 +170,18 @@
         </div>
         <div class="section2">
             <div class="section2-deatils">
-                <div class="about">
+                <div class="about about-scroll">
                     <h6><ion-icon name="heart"></ion-icon></h6>
                     <h5>ABOUT FOUNDATION</h5>
                 </div>
                 <div class="detailss">
                     <h1>WHAT HAVE WE DONE WITH YOUR HELP</h1>
                     <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage Lorem of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle There are many variations of passages</p>
-                    <h4>join our Action and everyone can help</h4>
+                    <!-- <h4>join our Action and everyone can help</h4> -->
                 </div>
                 <div class="section2-btns">
-                    <button class="btn3">DONATE NOW</button>
-                    <button class="btn4">BECAME A VOLUNTEER</button>
+                    <a href="{% url 'donation' %}" style="cursor: pointer;"><button class="btn3" style="cursor: pointer;">DONATE NOW</button></a>
+                    <button class="btn4" style="opacity: 0;">BECAME A VOLUNTEER</button>
                 </div>
             </div>
             <div class="image-write">
@@ -219,11 +251,11 @@
                     <h5>VOLUNTEER</h5>
                 </div>
                 <div class="detailsss">
-                    <h1>JOIN WITH US BECAME A VOLUNTEER</h1>
+                    <h1>JOIN WITH US BECOME A VOLUNTEER</h1>
                     <h4 style="font-size: 17px;">MORE THAN 200+ PEOPLE </h4>
                     <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need be sure there isn't anything embarrassing hidden in the middle There are many variations of passages of Lorem Ipsum available</p>
                 </div>
-                <button class="btn44">BECAME A VOLUNTEER</button>
+                <button class="btn44" style="opacity: 0;">BECAME A VOLUNTEER</button>
             </div>
         </div>
         <div class="last-section" style="margin-top: -50px;margin-bottom: 180px;">
@@ -244,7 +276,7 @@
                         <div class="card-details">
                             <button>{{blog.category}}</button>
                             <h1>{{blog.title}}</h1>
-                            <p>{{blog.description}}</p>
+                            <p style="height: 100px;overflow: hidden;">{{blog.description}}</p>
                             <div class="profile">
                                 
                                 <div class="profile-img">
@@ -267,6 +299,12 @@
             </div>           
         </div>
     </div>
+    <footer style="display: flex;justify-content: center;align-items: center;gap: 35px;color: white;background-color: #161616;height: 65px;" class="contact">
+        <h3><ion-icon name="logo-facebook"></ion-icon></h3>
+        <h3><ion-icon name="logo-twitter"></ion-icon></h3>
+        <h3><ion-icon name="logo-instagram"></ion-icon></h3>
+    </footer>
+    </body>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>   
     <script src="{% static 'js/index.js' %}"></script>
@@ -338,6 +376,28 @@
 
           method:"POST",
           url:'/register/',
+          processData:false,
+          contentType:false,
+          MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              
+              setTimeout(()=>{
+
+                  location.reload();
+
+              },1000)
+          }
+          })
+
+  }
+
+  function signup1(data){
+      console.log("888888888");
+      $.ajax({
+
+          method:"POST",
+          url:'/registercharity/',
           processData:false,
           contentType:false,
           MimeType:"multipart/form-data",
@@ -430,6 +490,21 @@
 
                       }
 
+                      if (document.querySelector('.phone').value.toString().length < 10 ||document.querySelector('.phone').value.toString().length >10 ) {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter a 10 digit phone number!");
+                      document.querySelector('.err2').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
                       if (document.querySelector('.address').value == "") {
 
 // alert("Valid email address!");
@@ -502,6 +577,180 @@
 
           }
       })
+  }
+
+
+  function checkSignupCharity(){
+      var data = new FormData()
+
+      data.append("username", document.querySelector('.username2').value)
+      data.append("email", document.querySelector('.email2').value)
+      data.append("password", document.querySelector('.password2').value)
+      data.append("phone", document.querySelector('.phone2').value)
+      data.append("address", document.querySelector('.address2').value)
+      console.log($("input[id^='file1']")[0].files[0])
+        data.append("file",$("input[id^='file1']")[0].files[0])
+        data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
+      data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
+
+      
+      $.ajax({
+
+          method:"POST",
+          url:'/checkSignup/',
+          processData:false,
+          contentType:false,
+          // MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              // localStorage.setItem("message",res.message)
+
+              if(res.message === 0){
+                  
+
+                      // alert("Valid email address!");
+                      
+                      var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+                      if (document.querySelector('.email2').value.match(validRegex)) {
+                          document.querySelector('.err3').style.display = "none"
+                          // alert("Valid email address!");
+                          error = 0
+                          console.log("");
+
+                      } else {
+
+                          alert("Invalid email address!");
+                          error = 1
+                          
+
+                      }
+
+                      if (document.querySelector('.username2').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter a valid username!");
+                      document.querySelector('.err3').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.phone2').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter phone number!");
+                      document.querySelector('.err3').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.phone2').value.toString().length < 10 ||document.querySelector('.phone2').value.toString().length >10 ) {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter a 10 digit phone number!");
+                      document.querySelector('.err2').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.address2').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter your address!");
+                      document.querySelector('.err3').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.password2').value == "" ) {
+
+                          alert("please fill the password!");
+                          document.querySelector('.err3').style.display = "none"
+                          error = 1
+                          } 
+                          
+                          else if(document.querySelector('.password2').value.length < 7){
+
+                          alert("password length must be greater than 7");
+                          document.querySelector('.err3').style.display = "none"
+                          error = 1
+
+
+                          }
+
+                          else{
+                              error = 0
+                              
+                          }
+
+                          if (document.querySelector('.file1').value == "" ) {
+
+                            alert("please choose a profile pic!");
+                            document.querySelector('.err3').style.display = "none"
+                            error = 1
+                            } 
+
+                            else{
+                                error = 0
+                                
+                            }
+
+                          
+                      
+
+                  
+                  
+                  // localStorage.setItem("username",document.querySelector('.username').value)
+                  // localStorage.setItem('password',document.querySelector('.password').value)
+                  // location.reload();
+                  
+              }
+              else{
+                  
+
+                  document.querySelector('.err3').style.display = "flex"
+
+              }
+
+              if(error == 0){
+                              signup1(data)
+                          }
+              
+
+          }
+      })
+  }
+
+  function about(){
+    document.querySelector('.about-scroll').scrollIntoView()
+  }
+
+  function contact(){
+    document.querySelector('.contact').scrollIntoView()
   }
 
   </script>

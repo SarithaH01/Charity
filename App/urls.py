@@ -6,6 +6,7 @@ urlpatterns = [
     
     path('',views.homepage,name = "homepage"),
     path('register/', views.register,name='register' ),
+    path('registercharity/', views.registercharity,name='registercharity' ),
     path('login/', views.user_login, name='login'),
     path('checkLogin/', views.checkLogin, name = "checkLogin"),
     path('checkSignup/', views.checkSignup,name = 'checkSignup'),
@@ -18,4 +19,10 @@ urlpatterns = [
     path('blog/', views.blog,name = 'blog'),
     path('charityDonation/<int:pk>', views.charityDonation,name = 'charityDonation'),
     path('sendDonation/', views.sendDonation,name = 'sendDonation'),
+    path('createBlog/', views.createBlog,name = 'createBlog'),
+    path('shop/', views.shop,name = 'shop'),
+    path('addProduct/',views.addProduct,name = 'addProduct'),
+    path('blood/', views.blood,name = 'blood'),
+    path('addBlood/',views.addBlood,name = 'addBlood'),
+    path('bloodView/<int:pk>',views.bloodView,name = 'bloodView'),
 ]
