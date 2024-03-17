@@ -299,8 +299,8 @@ def createEvent(request):
         store_contact, private_key=private_key
     )
     # Send the transaction
-    # send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
-    # transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
+    send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
     # test = w3.eth.contract(address= str(transaction_receipt.contractAddress), abi=abi)
     # print("[+] Details : ",test.functions.retrieve().call())
     return HttpResponseRedirect(reverse('homepage'))
@@ -344,7 +344,7 @@ def eventView(request,pk):
         print(test.functions.getDonationDetails().call())
 
         result = test.functions.getDonationDetails().call()
-        print("[+] Amount result : ",result[0][4])
+        # print("[+] Amount result : ",result[0][4])
         
         sumAmt += int(result[0][4])
     toGo = event.goal - sumAmt
@@ -481,8 +481,8 @@ def donate(request):
         store_contact, private_key=private_key
     )
     # Send the transaction
-    #send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
-    #transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
+    send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
 
     print("[+] Donation details : ",contact_list.functions.getDonationDetails().call())
     return JsonResponse({"success":1})
