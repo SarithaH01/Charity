@@ -1,0 +1,760 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+</head>
+<body id="style-2">
+    <div class="login-wrapper">
+        <div class="main" style="width: 250px;">
+            <h2 style="position: absolute;top: 20px;right: 20px;color: rgb(17, 17, 17);z-index: 100;font-size: 15px;" onclick="closeLogin()"><i class="fa-solid fa-x" style="color: rgb(18, 18, 18);"></i></h2>
+            <img src="{% static 'images/logo_1.png' %}" alt="" style="width: 130px;transform: rotate(0deg); margin-bottom: 28px;margin-top: 25px;">
+            <h1 style="color: rgb(19, 19, 19);font-size: 18px;">Signin</h1>
+            <p style="color: rgb(94, 94, 94);">Login into your account now</p>
+    
+            <div class="inputs">
+                <input type="text" placeholder="username" class="userName" style="margin-bottom: 10px;"><br>
+                <input type="password" placeholder="password" class="password"><br>
+            </div>
+            <p style="display: none;justify-content: center;align-items: center;width: 100%;margin-top: 25px;opacity: 1;margin-bottom: 10px;color: #ea4848;" class="error">Invalid login credentials</p>
+
+            <button onclick="sendData()">Login into my account</button>
+            <h4 style="font-weight: 500;">OR</h4>
+            <button onclick="showSignup()" style="background-color: #e8e8e8;color: rgb(26, 26, 26);">create a new account</button>
+            <button onclick="showSignupCharity()" style="background-color: #e8e8e8;color: rgb(26, 26, 26);">Charity organization signup</button>
+
+        </div>
+    </div>
+
+    <div class="signup-wrapper">
+        <div class="main" style="width: 250px;">
+            <h2 style="position: absolute;top: 20px;right: 20px;color: rgb(0, 0, 0);font-size: 15px;" onclick="closeSignup()"><i class="fa-solid fa-x" style="color: rgb(32, 32, 32);"></i></ion-icon></h2>
+            <img src="{% static 'images/logo_1.png' %}" alt="" style="width: 130px;transform: rotate(0deg); margin-bottom: 28px;margin-top: 25px;">
+            
+            <!-- <h1  style="color: black;font-size: 18px;color: rgb(31, 31, 31);">Signup</h1> -->
+            <p style="color: rgb(50, 50, 50);">Create your new account now</p>
+            <div style="display: flex;justify-content: center;align-items: center;gap: 25px;margin-bottom: 15px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaUTp3j_LpF5r5_gNdvW0g7p057ExdcHWbUQ&usqp=CAU" alt="" style="width: 60px;height: 60px;border-radius: 100px;object-fit: cover;" class="profile-pic">
+                <h3 style="position: relative;width: 120px;padding: 8px;background-color: #a47836;border-radius: 8px;color: white;font-size: 15px;text-align: center;font-weight: 500;"> <input type="file" name="" id="file" style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;opacity: 0;" class="file" required onchange="setProfilePic(this)"> Choose Image</h3>
+            </div>
+            <div class="inputs inps">
+                <input type="text" placeholder="username" class="username1"><br>
+                <input type="email" placeholder="email address" class="email1"><br>
+                <input type="number" placeholder="phone number" class="phone">
+                <input type="text" placeholder="Address" class="address"><br>
+
+                <input type="password" placeholder="password" class="password1"><br>
+            </div>
+            <p style="margin-top: -7px;color: rgb(235, 66, 66);opacity: 1;width: 100%;text-align: center;display: none;font-size: 15px;justify-content: center;align-items: center;margin-bottom: 15px;" class="err2">Username already exists</p>
+
+            <button onclick="checkSignup()">Create a new account account</button>
+        </div>
+    </div>
+
+    <div class="signup-wrapper-charity">
+        <div class="main" style="width: 250px;">
+            <h2 style="position: absolute;top: 20px;right: 20px;color: rgb(0, 0, 0);font-size: 15px;" onclick="closeSignupCharity()"><i class="fa-solid fa-x" style="color: rgb(32, 32, 32);"></i></ion-icon></h2>
+            <img src="{% static 'images/logo_1.png' %}" alt="" style="width: 130px;transform: rotate(0deg); margin-bottom: 28px;margin-top: 25px;">
+            
+            <!-- <h1  style="color: black;font-size: 18px;color: rgb(31, 31, 31);">Signup</h1> -->
+            <p style="color: rgb(50, 50, 50);">Create your new account now</p>
+            <div style="display: flex;justify-content: center;align-items: center;gap: 25px;margin-bottom: 15px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaUTp3j_LpF5r5_gNdvW0g7p057ExdcHWbUQ&usqp=CAU" alt="" style="width: 60px;height: 60px;border-radius: 100px;object-fit: cover;" class="profile-pic2">
+                <h3 style="position: relative;width: 120px;padding: 8px;background-color: #a47836;border-radius: 8px;color: white;font-size: 15px;text-align: center;font-weight: 500;"> <input type="file" name="" id="file1" style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;opacity: 0;" class="file1" required onchange="setProfilePic2(this)"> Choose Image</h3>
+            </div>
+            <div class="inputs inps">
+                <input type="text" placeholder="Organization name" class="username2"><br>
+                <input type="email" placeholder="email address" class="email2"><br>
+                <input type="number" placeholder="phone number" class="phone2">
+                <input type="text" placeholder="Address" class="address2"><br>
+
+                <input type="password" placeholder="password" class="password2"><br>
+            </div>
+            <p style="margin-top: -7px;color: rgb(235, 66, 66);opacity: 1;width: 100%;text-align: center;display: none;font-size: 15px;justify-content: center;align-items: center;margin-bottom: 15px;" class="err3">Organization name already exists</p>
+
+            <button onclick="checkSignupCharity()">Create a new account account</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="navbar" style="z-index: 150;">
+            <img src="{% static 'images/logo_1.png' %}" alt="" style="width: 130px;">
+            <div class="link">
+                <a style="cursor: pointer;">HOME</a>
+                <a onclick="about()" style="cursor: pointer;">ABOUT</a>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'donation' %}">DONATIONS</a>
+                {% endif %}
+                <a href="{% url 'blog' %}">BLOG</a>
+                {% if request.user.is_authenticated %}
+                <!-- <a href="{% url 'shop' %}">SHOP</a> -->
+                {% endif %}
+                <!-- <a href="">PAGES</a> -->
+                <!-- <a onclick="contact()" style="cursor: pointer;">CONTACT US</a> -->
+            </div>
+            <div class="icons">
+                <h2 style="opacity: 0;pointer-events: none;"><ion-icon name="bag-handle-outline"></ion-icon></h2>
+                <h2 style="opacity: 0;pointer-events: none;"><ion-icon name="search-outline"></ion-icon></h2>
+            </div>
+            {% if not request.user.is_authenticated %}
+            <!-- <button style="background-color: #e8e8e8;color: black;" >Login</button> -->
+            <button onclick="showLogin()" style="margin-left: -80px;">Login</button>
+            {% else %}
+            <a href="{% url 'logout' %}"><button style="background-color: #e8e8e8;color: black;">Logout</button></a>
+
+            {% endif %}
+        </div>
+        <div class="banner">
+            <div class="banner-details">
+                <h2>GIVE YOUR HAND</h2>
+                <h1>TO THE HOMELESS</h1>
+                <h5 style="margin-top: 15px;"><ion-icon name="arrow-down-outline"></ion-icon></h5>
+                <h6>SCROLL DOWN</h6>
+            </div>
+            <img src="{% static 'images/hero-bg-thumb-2.png' %}" alt="" >
+        </div>
+        <div class="section1">
+            <div class="buttons">
+                <button class="btn1">LIVE DONATION</button>
+                <button class="btn1">PEER TO PEER TRANSFER </button>
+                <button class="btn1">SECURE</button>
+            </div>
+            <div class="heading">
+                <div class="line"></div>
+                <h1>DONATE FOR AFRICAN CHILD</h1>
+                <div class="line"></div>
+            </div>
+            <div class="section1-heading">
+                <h1>28,0000</h1>
+                <div class="progressing">
+                    <div class="progress">
+                        <div class="in">
+                        </div>
+                    </div>
+                    <div class="circle">
+                        <div class="in-circle"></div>
+                    </div>
+                </div> 
+                <div class="cards">
+                    <div class="cards11">
+                        <div class="cards1">
+                            <img style="margin-bottom: 15px;" src="{% static 'images/feature-icon-1.svg' %}" alt="">
+                            <h3>TOGETHER PLEDGE</h3>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                            <h5><ion-icon name="ellipse"></ion-icon>&nbsp<ion-icon name="ellipse"></ion-icon>&nbsp<ion-icon name="ellipse"></ion-icon></h5>
+                        </div>
+                    </div>    
+                    <div class="cards11">
+                        <div class="cards1">
+                            <img style="margin-bottom: 15px;" src="{% static 'images/feature-icon-2.svg' %}" alt="">
+                            <h3>DONATE FOR HOMLESS</h3>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                            <h5><ion-icon name="ellipse"></ion-icon>&nbsp<ion-icon name="ellipse"></ion-icon>&nbsp<ion-icon name="ellipse"></ion-icon></h5>
+                        </div>
+                    </div>    
+                    <div class="cards11">
+                        <div class="cards1">
+                            <img style="margin-bottom: 15px;" src="{% static 'images/feature-icon-3.svg' %}" alt="">
+                            <h3>FUNDRAISE</h3>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                            <h5><ion-icon name="ellipse"></ion-icon>&nbsp<ion-icon name="ellipse"></ion-icon>&nbsp<ion-icon name="ellipse"></ion-icon></h5>
+                        </div>
+                    </div>    
+                </div>   
+            </div>
+        </div>
+        <div class="section2">
+            <div class="section2-deatils">
+                <div class="about about-scroll">
+                    <h6><ion-icon name="heart"></ion-icon></h6>
+                    <h5>ABOUT FOUNDATION</h5>
+                </div>
+                <div class="detailss">
+                    <h1>WHAT HAVE WE DONE WITH YOUR HELP</h1>
+                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage Lorem of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle There are many variations of passages</p>
+                    <!-- <h4>join our Action and everyone can help</h4> -->
+                </div>
+                <div class="section2-btns">
+                    <a href="{% url 'donation' %}" style="cursor: pointer;"><button class="btn3" style="cursor: pointer;">DONATE NOW</button></a>
+                    <button class="btn4" style="opacity: 0;">BECAME A VOLUNTEER</button>
+                </div>
+            </div>
+            <div class="image-write">
+                <img src="{% static 'images/about-thumb-1.jpg' %}" alt="">
+            </div>
+        </div>
+        <div class="section3">
+            <img src="{% static 'images/map-fact.png' %}" alt="">
+            <div class="sect3-img">
+                <div class="section3-heading">
+                    <div class="about">
+                        <h6><ion-icon name="heart"></ion-icon></h6>
+                        <h5>NEED YOUR HELP</h5>
+                    </div>
+                    <h1>WE ARE ALWAYS WHERE OTHERS NEED HELP</h1>
+                </div> 
+                <div class="circle-group">
+                    <div class="circles3">
+                        <div class="circle1">
+                            <h1>16000,<b style="color: #ff9900;font-weight: 500;">KG</b></h1>
+                            <h5>FOOD</h5>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                        </div>
+                        <div class="circle2">
+                            <h1>23,<b style="color: #ff9900;font-weight: 500;">MLN</b></h1>
+                            <h5>FOOD</h5>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                        </div>
+                        <div class="circle3">
+                            <h1>14000,<b style="color: #ff9900;font-weight: 500;">+</b></h1>
+                            <h5>FOOD</h5>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                        </div>
+                    </div>
+                    <div class="circles2">
+                        <div class="circle4">
+                            <h1>16000,<b style="color: #ff9900;font-weight: 500;">KG</b></h1>
+                            <h5>FOOD</h5>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                        </div>
+                        <div class="circle5">
+                            <h1>23<b style="color: #ff9900;font-weight: 500;">MLN</b></h1>
+                            <h5>FOOD</h5>
+                            <p>We help local nonprofits access the funding, tools, training,</p>
+                        </div>
+                    </div>
+                </div> 
+            </div>      
+        </div>
+        <div class="section4">
+            <div class="images-groups-images">
+                <img class="image21" src="{% static 'images/volunteer-thumb1.jpg' %}" alt="">
+                <div class="peoples-images">
+                    <div class="people-image">
+                        <img class="image22" src="{% static 'images/volunteer-user1.jpg' %}" alt="">
+                        <img class="image221" src="{% static 'images/volunteer-user2.jpg' %}" alt="">
+                        <img class="image222" src="{% static 'images/volunteer-user3.jpg' %}" alt="">
+                        <img class="image223" src="{% static 'images/volunteer-user4.jpg' %}" alt="">
+                        <img class="image224" src="{% static 'images/volunteer-user5.jpg' %}" alt="">
+                        <img class="key" src="{% static 'images/volunteer-user6.jpg' %}" alt="">
+                    </div>
+                </div>    
+            </div>
+            <div class="section2-deatils">
+                <div class="about">
+                    <h6><ion-icon name="heart"></ion-icon></h6>
+                    <h5>VOLUNTEER</h5>
+                </div>
+                <div class="detailsss">
+                    <h1>JOIN WITH US BECOME A VOLUNTEER</h1>
+                    <h4 style="font-size: 17px;">MORE THAN 200+ PEOPLE </h4>
+                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need be sure there isn't anything embarrassing hidden in the middle There are many variations of passages of Lorem Ipsum available</p>
+                </div>
+                <button class="btn44" style="opacity: 0;">BECAME A VOLUNTEER</button>
+            </div>
+        </div>
+        <div class="last-section" style="margin-top: -50px;margin-bottom: 180px;">
+            <div class="last-heading">
+                <div class="about">
+                    <h6><ion-icon name="heart"></ion-icon></h6>
+                    <h5>NEWSFEED</h5>
+                    <h6 style="margin-right: 0px;margin-left: 10px;"><ion-icon name="heart"></ion-icon></h6>
+                </div>
+                <h1>LATEST NEWS & ARTICLE</h1>
+            </div>
+            <div class="image-section">
+                {% for blog in blogs %}
+
+                <div class="image-card">
+                    <img class="main" src="{{blog.image.url}}" alt="">
+                    <div class="cards-details">
+                        <div class="card-details">
+                            <button>{{blog.category}}</button>
+                            <h1>{{blog.title}}</h1>
+                            <p style="height: 100px;overflow: hidden;">{{blog.description}}</p>
+                            <div class="profile">
+                                
+                                <div class="profile-img">
+                                    <img src="{% static 'images/user2.jpg' %}" alt="">
+                                    <h3>{{blog.username.username}}</h3>
+                                </div>
+                                
+                                <div class="card-icons">
+                                    <h4>{{blog.date}}</h4>
+                                    <h5><ion-icon name="time-outline"></ion-icon></h5>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+
+                {% endfor %}
+                
+            </div>           
+        </div>
+    </div>
+    <footer style="display: flex;justify-content: center;align-items: center;gap: 35px;color: white;background-color: #161616;height: 65px;" class="contact">
+        <h3><ion-icon name="logo-facebook"></ion-icon></h3>
+        <h3><ion-icon name="logo-twitter"></ion-icon></h3>
+        <h3><ion-icon name="logo-instagram"></ion-icon></h3>
+    </footer>
+    </body>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>   
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+<script>
+  function sendData(){
+      
+      var data = new FormData()
+
+      data.append("username", document.querySelector('.userName').value)
+      data.append("password", document.querySelector('.password').value)
+      data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
+      
+      $.ajax({
+
+          method:"POST",
+          url:'/checkLogin/',
+          processData:false,
+          contentType:false,
+          // MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              localStorage.setItem("message",res.message)
+
+              if(res.message === 0){
+                  
+                  login(data)
+                  localStorage.setItem("username",document.querySelector('.userName').value)
+                  localStorage.setItem('password',document.querySelector('.password').value)
+                  // location.reload();
+                  
+              }
+              else{
+                  document.querySelector('.error').style.display = "flex"
+                  
+              }
+              
+
+          }
+      })
+  }
+
+  function login(data){
+
+
+      $.ajax({
+
+          method:"POST",
+          url:'/login/',
+          processData:false,
+          contentType:false,
+          MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              console.log("it worked :)")
+              
+              setTimeout(()=>{
+
+                  location.reload();
+              },1000)
+          }
+          })
+  }
+
+  function signup(data){
+      console.log("888888888");
+      $.ajax({
+
+          method:"POST",
+          url:'/register/',
+          processData:false,
+          contentType:false,
+          MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              
+              setTimeout(()=>{
+
+                  location.reload();
+
+              },1000)
+          }
+          })
+
+  }
+
+  function signup1(data){
+      console.log("888888888");
+      $.ajax({
+
+          method:"POST",
+          url:'/registercharity/',
+          processData:false,
+          contentType:false,
+          MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              
+              setTimeout(()=>{
+
+                  location.reload();
+
+              },1000)
+          }
+          })
+
+  }
+
+  function checkSignup(){
+      var data = new FormData()
+
+      data.append("username", document.querySelector('.username1').value)
+      data.append("email", document.querySelector('.email1').value)
+      data.append("password", document.querySelector('.password1').value)
+      data.append("phone", document.querySelector('.phone').value)
+      data.append("address", document.querySelector('.address').value)
+      console.log($("input[id^='file']")[0].files[0])
+        data.append("file",$("input[id^='file']")[0].files[0])
+        data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
+      data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
+
+      
+      $.ajax({
+
+          method:"POST",
+          url:'/checkSignup/',
+          processData:false,
+          contentType:false,
+          // MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              // localStorage.setItem("message",res.message)
+
+              if(res.message === 0){
+                  
+
+                      // alert("Valid email address!");
+                      
+                      var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+                      if (document.querySelector('.email1').value.match(validRegex)) {
+                          document.querySelector('.err2').style.display = "none"
+                          // alert("Valid email address!");
+                          error = 0
+                          console.log("");
+
+                      } else {
+
+                          alert("Invalid email address!");
+                          error = 1
+                          
+
+                      }
+
+                      if (document.querySelector('.username1').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter a valid username!");
+                      document.querySelector('.err2').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.phone').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter phone number!");
+                      document.querySelector('.err2').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.phone').value.toString().length < 10 ||document.querySelector('.phone').value.toString().length >10 ) {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter a 10 digit phone number!");
+                      document.querySelector('.err2').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.address').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter your address!");
+                      document.querySelector('.err2').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.password1').value == "" ) {
+
+                          alert("please fill the password!");
+                          document.querySelector('.err2').style.display = "none"
+                          error = 1
+                          } 
+                          
+                          else if(document.querySelector('.password1').value.length < 7){
+
+                          alert("password length must be greater than 7");
+                          document.querySelector('.err2').style.display = "none"
+                          error = 1
+
+
+                          }
+
+                          else{
+                              error = 0
+                              
+                          }
+
+                          if (document.querySelector('.file').value == "" ) {
+
+                            alert("please choose a profile pic!");
+                            document.querySelector('.err2').style.display = "none"
+                            error = 1
+                            } 
+
+                            else{
+                                error = 0
+                                
+                            }
+
+                          
+                      
+
+                  
+                  
+                  // localStorage.setItem("username",document.querySelector('.username').value)
+                  // localStorage.setItem('password',document.querySelector('.password').value)
+                  // location.reload();
+                  
+              }
+              else{
+                  
+
+                  document.querySelector('.err2').style.display = "flex"
+
+              }
+
+              if(error == 0){
+                              signup(data)
+                          }
+              
+
+          }
+      })
+  }
+
+
+  function checkSignupCharity(){
+      var data = new FormData()
+
+      data.append("username", document.querySelector('.username2').value)
+      data.append("email", document.querySelector('.email2').value)
+      data.append("password", document.querySelector('.password2').value)
+      data.append("phone", document.querySelector('.phone2').value)
+      data.append("address", document.querySelector('.address2').value)
+      console.log($("input[id^='file1']")[0].files[0])
+        data.append("file",$("input[id^='file1']")[0].files[0])
+        data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
+      data.append("csrfmiddlewaretoken",'{{ csrf_token }}')
+
+      
+      $.ajax({
+
+          method:"POST",
+          url:'/checkSignup/',
+          processData:false,
+          contentType:false,
+          // MimeType:"multipart/form-data",
+          data:data,
+          success:function(res){
+              // localStorage.setItem("message",res.message)
+
+              if(res.message === 0){
+                  
+
+                      // alert("Valid email address!");
+                      
+                      var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+                      if (document.querySelector('.email2').value.match(validRegex)) {
+                          document.querySelector('.err3').style.display = "none"
+                          // alert("Valid email address!");
+                          error = 0
+                          console.log("");
+
+                      } else {
+
+                          alert("Invalid email address!");
+                          error = 1
+                          
+
+                      }
+
+                      if (document.querySelector('.username2').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter a valid username!");
+                      document.querySelector('.err3').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.phone2').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter phone number!");
+                      document.querySelector('.err3').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.phone2').value.toString().length < 10 ||document.querySelector('.phone2').value.toString().length >10 ) {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter a 10 digit phone number!");
+                      document.querySelector('.err2').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.address2').value == "") {
+
+// alert("Valid email address!");
+                      error = 1
+                      alert("please enter your address!");
+                      document.querySelector('.err3').style.display = "none"
+
+
+                      } else {
+
+                          console.log("");
+                          error = 0
+
+                      }
+
+                      if (document.querySelector('.password2').value == "" ) {
+
+                          alert("please fill the password!");
+                          document.querySelector('.err3').style.display = "none"
+                          error = 1
+                          } 
+                          
+                          else if(document.querySelector('.password2').value.length < 7){
+
+                          alert("password length must be greater than 7");
+                          document.querySelector('.err3').style.display = "none"
+                          error = 1
+
+
+                          }
+
+                          else{
+                              error = 0
+                              
+                          }
+
+                          if (document.querySelector('.file1').value == "" ) {
+
+                            alert("please choose a profile pic!");
+                            document.querySelector('.err3').style.display = "none"
+                            error = 1
+                            } 
+
+                            else{
+                                error = 0
+                                
+                            }
+
+                          
+                      
+
+                  
+                  
+                  // localStorage.setItem("username",document.querySelector('.username').value)
+                  // localStorage.setItem('password',document.querySelector('.password').value)
+                  // location.reload();
+                  
+              }
+              else{
+                  
+
+                  document.querySelector('.err3').style.display = "flex"
+
+              }
+
+              if(error == 0){
+                              signup1(data)
+                          }
+              
+
+          }
+      })
+  }
+
+  function about(){
+    document.querySelector('.about-scroll').scrollIntoView()
+  }
+
+  function contact(){
+    document.querySelector('.contact').scrollIntoView()
+  }
+
+  </script>
+
+   
+</body>
+</html>
