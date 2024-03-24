@@ -20,9 +20,5 @@ urlpatterns = [
     path('charityDonation/<int:pk>', views.charityDonation,name = 'charityDonation'),
     path('sendDonation/', views.sendDonation,name = 'sendDonation'),
     path('createBlog/', views.createBlog,name = 'createBlog'),
-    path('shop/', views.shop,name = 'shop'),
-    path('addProduct/',views.addProduct,name = 'addProduct'),
-    path('blood/', views.blood,name = 'blood'),
-    path('addBlood/',views.addBlood,name = 'addBlood'),
-    path('bloodView/<int:pk>',views.bloodView,name = 'bloodView'),
+    
 ]

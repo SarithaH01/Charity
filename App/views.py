@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render              #simplifies the process of rendering HTML templates with context data
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth.decorators import login_required
@@ -6,18 +6,19 @@ from django.urls import reverse
 from django.db.models import Q
 from django.contrib.auth.models import User
 from .models import userProfile,Event,Donation,Account,Blog,Track,Product,Blood
-from web3 import Web3
+from web3 import Web3                          #web3 is a Python library used to interact with Ethereum nodes
 
 from django.core.files.storage import FileSystemStorage
 
 ganache_url = "HTTP://127.0.0.1:7545"
 
-from solcx import compile_standard, install_solc
-install_solc('0.8.0')
+from solcx import compile_standard, install_solc         # import the compile_standard and install_solc functions from the solcx module 
+install_solc('0.8.0')                   # then call the install_solc function to install Solidity compiler version 0.8.0.
+
 import json
 
-accounts_list = [{"address":"0x5Ce706b63fb84b93F076c9333d6BE73Ab39e20c8","private_key":"0xc9cfb7f337ea194a7dca7b4f02017d3b6af897b57fd1f45c598bd28acc1af584"},{"address":"0xC606BFEB496E26C3554Be0B92cFa66C29f6F7689","private_key":"0xb93d102fbce92d33f328f6afa6835277dfe7ab6c08c9905e9260ea70c8f4a3fc"},{"address":"0xf4C425a4592e88f9ABc2b780F1379dcd50188aBE","private_key":"0xbe323aeed2bb680e6c868bec281d9f2ffc217aabb5c54c5c5a3e880b784b5245"}]
-accounts_list_charity = [{"address":"0xd64bbc438BdDE4F22e7415dF37f0dC7d5416916A","private_key":"0x04995ee2c5d31dfbaff48916ceb85f7155c0efa6718f77ae156171cc6b703a82"},{"address":"0x02152bce649784d67BDb3c1ec8C5fc2e8462142D","private_key":"0x4f4ee6669d8a6360f4519c8e81e9e383f85fd73dae083f9cf05219aa1314eb96"},{"address":"0x6d56e48386E1C035407E416292D9ae471B973f5B","private_key":"0xbbbd2b98c7b12ebc5fe6231901ab0cc034c0996d0453bd3951368bf40ad927ab"}]
+accounts_list = [{"address":"0x716e37EBaB8A31507e48204ce12C73668d3ae609","private_key":"0x40fb77c57fa97cbf2272f0260734add6b417f7613f649ab971f7654566dcb40e"},{"address":"0xB57ad6BC98E1a84699cF8B6b6Fe807936Ae0C4a8","private_key":"0x612789267ca9a0a7b263e71f9c3435f2b11591bbe9f7e6838c37424364f3b747"},{"address":"0xE4a42E0E24c42febf087271517CcfAF969caEce3","private_key":"0x4a1c6c26042dadfb85f64e0cc10a5b371cbb39f138a2eb7002227a89cb85d4bd"}]
+accounts_list_charity = [{"address":"0x5F394896AeCDf8b13bc7841CA376fFe2a45246fd","private_key":"0x639dbe3c15da76332ee5d7b846013511d3527bc7ecf5390c3d05cfe1620e3d06"},{"address":"0x8A74033E25A4588a3C24DDa7a4e0317825D2AAD1","private_key":"0xf734702508d42a6898f8014a22ac2a8ed499a66d70bcc7144ec37da4bf0f845d"},{"address":"0x97C85a7E1592C4Ed85A5F1335D2763fb688BF6Fb","private_key":"0x1809870717b02c32001d395bf9021815463dcb7c38443c2c5b258120f81a4568"}]
 
 with open("donation.sol", "r") as file:
     contact_list_file = file.read()
@@ -36,22 +37,22 @@ compiled_sol = compile_standard(
     },
     solc_version="0.8.0",
 )
-# print(compiled_sol)
+
 with open("donation_code.json", "w") as file:
-    json.dump(compiled_sol, file)
-address = "0x59512AC008Dfa083A21A2ebeeF5aadc41eD12fE7"
-private_key = "0xff6ce83c23154d1fe3fe4a65202d284963a7937a120646c01f70a019b35bd77a"
-# print(accounts_list)
+    json.dump(compiled_sol, file)          # dump() is used to write JSON data to a file-like object
+address = "0xb9F21C013EA140c79d66Fe4D2B82813c9bB049aC"
+private_key = "0xafe8675e8af7e4bd0c7380ead58f66b14d30eaa6c977f23b6505190c5489f3a8"
+
 
 def homepage(request):
     
     if request.user.is_authenticated:
-        profile = userProfile.objects.filter(user = request.user).first()
+        profile = userProfile.objects.filter(user = request.user).first() #If logged in, retrieves the user's profile from the database
 
     else:
-        profile = ''
-    blog = Blog.objects.all().order_by('-date')
-    return render(request,'index.html',context = {'profile':profile,"blogs":blog[:2]})
+        profile = ''        #If not logged in, sets the profile variable to an empty string
+    blog = Blog.objects.all().order_by('-date')   #Orders the blog entries by their date in descending order.
+    return render(request,'index.html',context = {'profile':profile,"blogs":blog[:2]})    # the index.html template can use it to render the page dynamically
 
 
 message = 0
@@ -60,18 +61,18 @@ reg_error = 0
 import random
 
 
-def register(request):
-    if request.method == 'POST':
-        user = User.objects.create(username = request.POST.get('username'),email=request.POST.get('email'))
+def register(request):       #to handle user registration 
+    if request.method == 'POST':   #indicates that the form on the registration page has been submitted
+        user = User.objects.create(username = request.POST.get('username'),email=request.POST.get('email'))  #creates a new user object
         user.set_password(request.POST.get('password'))
         user.save()
 
         file = request.FILES.get('file')
         fss = FileSystemStorage()
         filename = fss.save(file.name,file)
-        url = fss.url(filename)
+        url = fss.url(filename)    #URL of the saved file is obtained
    
-        user = User.objects.filter(username=request.POST.get('username')).first()
+        user = User.objects.filter(username=request.POST.get('username')).first()   #It then creates a corresponding user profile object and associates it with the user
         
         profile = userProfile.objects.create(user=user)
         random_account = random.choice(accounts_list)
@@ -88,13 +89,13 @@ def register(request):
     return HttpResponseRedirect(reverse('homepage'))
 
 
-def registercharity(request):
+def registercharity(request):          #to handle charity registration
     if request.method == 'POST':
         user = User.objects.create(username = request.POST.get('username'),email=request.POST.get('email'))
         user.set_password(request.POST.get('password'))
         user.save()
 
-        file = request.FILES.get('file')
+        file = request.FILES.get('file')          #handle the file upload associated with the registration
         fss = FileSystemStorage()
         filename = fss.save(file.name,file)
         url = fss.url(filename)
@@ -114,12 +115,12 @@ def registercharity(request):
         profile.save()
 
 
-    return HttpResponseRedirect(reverse('homepage'))
+    return HttpResponseRedirect(reverse('homepage'))   
 
 
-def checkLogin(request):
+def checkLogin(request):                    #to handle user login attempts, authenticate users based on the provided credentials
     
-    username = request.POST.get('username')
+    username = request.POST.get('username')             #These lines retrieve the username and password submitted through a POST request
     password = request.POST.get('password')
 
     user = authenticate(username = username,password = password)
@@ -134,7 +135,7 @@ def checkLogin(request):
 message = 0
 reg_error = 0
 
-def checkSignup(request):
+def checkSignup(request):             #validate the availability of a username for user signup
     
     username = request.POST.get('username')
     password = request.POST.get('password')
@@ -179,7 +180,7 @@ def user_logout(request):
 
 
 def donations(request):
-    events = Event.objects.filter(approved = True)
+    events = Event.objects.filter(approved = True)      #to fetch all approved events from the database
     
     with open("donation.sol", "r") as file:
             contact_list_file = file.read()
@@ -199,15 +200,15 @@ def donations(request):
     solc_version="0.8.0",
 )
 # print(compiled_sol)
-    with open("donation_code.json", "w") as file:
+    with open("donation_code.json", "w") as file:              
         json.dump(compiled_sol, file)
-
+    #extract the bytecode and ABI from the compiled Solidity code stored in compiled_sol
     bytecode = compiled_sol["contracts"]["ContactList.sol"]["EventDonation"]["evm"]["bytecode"]["object"]
     abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["EventDonation"]["metadata"])["output"]["abi"]
 
 
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
-    events_all =[]
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))        #It connects to the local Ethereum node running at HTTP://127.0.0.1:7545
+    events_all =[]         #initializes an empty list to store information about all events
     
     print("[+] Events : ",events)
     for event in events:
@@ -229,6 +230,7 @@ def donations(request):
         else:
             remaining = event.goal - sumAmt
         
+        #is to organize and encapsulate information about each event in a structured format
         eve = {'title':event.title,"description":event.description,"user":event.user,"date":event.date,'raised':sumAmt,"goal":event.goal,"pk":event.pk,"image":event.image,"toGo":remaining,"hashtag":event.hashtag}
         events_all.append(eve)
     profile = userProfile.objects.filter(user = request.user).first()
@@ -254,7 +256,6 @@ def createEvent(request):
     # For connecting to ganache
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
- # leaving the private key like this is very insecure if you are working on real world project
     # Create the contract in Python
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
     # Get the number of latest transaction
@@ -481,7 +482,6 @@ def tracking(request,pk):
             
             donation_1 = {'from_user':donation.user.username,"to_user":donation.to_user,"amount":int(donation.amount),"address":donation.toaddress,"date":donation.date,"image":userpro.image.url}
             acc = Account.objects.filter(event = donation.event).first()    
-            # donation_1 = {'from_user':result[0][0],"to_user":result[0][1],"amount":int(result[0][4]),"address":result[0][3],"date":donation.date,"image":userpro.image.url}
             if donation.sent:
                 donation_2 = {'from_user':donation.to_user,"to_user":acc.username,"address":acc.address,"date":donation.date,"amount":donation.amount}
             amt_list.append(donation_1)
@@ -489,10 +489,9 @@ def tracking(request,pk):
                 amt_list.append(donation_2)
             amounts.append(amt_list)
         except:
-            print("error------------------")
+            
             userpro = userProfile.objects.filter(user = event.user).first()
             donation_1 = {'from_user':donation.user.username,"to_user":donation.to_user,"amount":int(donation.amount),"address":donation.toaddress,"date":donation.date,"image":userpro.image.url}
-            # donation_2 = {'from_user':result1[0][1],"to_user":result1[0][0],"address":result1[0][4],"date":result1[0][3],"amount":result[0][4]}
             amt_list.append(donation_1)
             
             amounts.append(amt_list)
@@ -587,64 +586,24 @@ def sendDonation(request):
     chain_id = 1337
 
     ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
-    address = "0x59512AC008Dfa083A21A2ebeeF5aadc41eD12fE7"
-    private_key = "0xff6ce83c23154d1fe3fe4a65202d284963a7937a120646c01f70a019b35bd77a"
+    address = "0xb9F21C013EA140c79d66Fe4D2B82813c9bB049aC"
+    private_key = "0xafe8675e8af7e4bd0c7380ead58f66b14d30eaa6c977f23b6505190c5489f3a8"
     nonce = w3.eth.getTransactionCount(address)
 
-    # transaction = ContactList.constructor().buildTransaction(
-    #     {
-    #         "chainId": chain_id,
-    #         "gasPrice": w3.eth.gas_price,
-    #         "from": address,
-    #         "nonce": nonce,
-    #     }
-    # )
-    # # Sign the transaction
-    # sign_transaction = w3.eth.account.sign_transaction(transaction, private_key=private_key)
-    # print("Deploying Contract!")
-    # # Send the transaction
-    # transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
-    # # Wait for the transaction to be mined, and get the transaction receipt
-    # print("Waiting for transaction to finish...")
-    # transaction_receipt = w3.eth.wait_for_transaction_receipt(transaction_hash)
-    # print(f"Done! Contract deployed to {transaction_receipt.contractAddress}")
+    
     donation = Donation.objects.filter(pk = request.POST.get('pk')).first()
     
-    # bytecode1 = compiled_sol["contracts"]["ContactList.sol"]["Event"]["evm"]["bytecode"]["object"]
-    # abi1 = json.loads(compiled_sol["contracts"]["ContactList.sol"]["Event"]["metadata"])["output"]["abi"]
     
-    # event = Event.objects.filter(pk = request.POST.get("event-pk")).first()
-    # acc = Account.objects.filter(event = event).first()
-
-    # test1 = w3.eth.contract(address=acc.transaction_address, abi=abi1)
-    # # print(test1.functions.getEventDetails().call())
-
-    # result2 = test1.functions.getEventDetails().call()
-
-    # print("[+] PK : ",donation)
-    # details = getDonationDetails(donation.transaction_address)
-    # print(details)
-    # contact_list = w3.eth.contract(address=transaction_receipt.contractAddress, abi=abi)
     track = Track.objects.create(from_user = request.user.username,to_user = donation.to_user,transaction_address = str("transaction_receipt.contractAddress"),donation = donation)
     import datetime
     current_time = datetime.datetime.now()
     formatted_time = current_time.strftime("%d/%m/%Y at %I:%M %p")
 
-    # store_contact = contact_list.functions.addTrackingDetails(
-    #     donation.to_user,request.user.username,details[0][1],str(formatted_time),result2[0][2]
-    # ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
+    
 
     donation.sent = True 
     donation.save()
-    # Sign the transaction
-    # sign_store_contact = w3.eth.account.sign_transaction(
-    #     store_contact, private_key=private_key
-    # )
-    # # Send the transaction
-    # send_store_contact = w3.eth.send_raw_transaction(sign_store_contact.rawTransaction)
-    # transaction_receipt = w3.eth.wait_for_transaction_receipt(send_store_contact)
-
-    # print(contact_list.functions.getTrackingDetails().call())
+    
 
    #--------------For donating amount -----------------------
 
@@ -690,35 +649,8 @@ def sendDonation(request):
     tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
     print("Transaction hash ::::::::  ------ ----- ----- ",tx_hash)
 
-    # bytecode = compiled_sol["contracts"]["ContactList.sol"]["EventDonation"]["evm"]["bytecode"]["object"]
-    # abi = json.loads(compiled_sol["contracts"]["ContactList.sol"]["EventDonation"]["metadata"])["output"]["abi"]
-
-
-    # chain_id = 1337
-    # address = "0x6fc6799BDF2cd05F97c3E25e2B5b14fD5C5A6691"
-    # private_key = "0153ba07a1fc8e859619ae09be74e585bc3b2f2951235d98ad9c92a5b21cf1e8" # leaving the private key like this is very insecure if you are working on real world project
-    # # Create the contract in Python
-    # ContactList = w3.eth.contract(abi=abi, bytecode=bytecode)
-    # # Get the number of latest transaction
-    # nonce = w3.eth.getTransactionCount(address)
-
-    # transaction = ContactList.constructor().buildTransaction(
-    #     {
-    #         "chainId": chain_id,
-    #         "gasPrice": w3.eth.gas_price,
-    #         "from": address,
-    #         "nonce": nonce,
-    #     }
-    # )
-    # # Sign the transaction
-    # sign_transaction = w3.eth.account.sign_transaction(transaction, private_key=private_key)
-    # print("Deploying Contract!")
-    # # Send the transaction
-    # transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
-    # # Wait for the transaction to be mined, and get the transaction receipt
-    # print("Waiting for transaction to finish...")
-    # transaction_receipt = w3.eth.wait_for_transaction_receipt(transaction_hash)
-    # print(f"Done! Contract deployed to {transaction_receipt.contractAddress}")
+   
+    
 
 
     return JsonResponse({"result":1})
@@ -730,58 +662,5 @@ def createBlog(request):
     return HttpResponseRedirect(reverse('blog'))
 
 
-def shop(request):
-    b = Product.objects.all().order_by('-date')
-    profile = userProfile.objects.filter(user = request.user).first()
-    products = []
-    for product in b:
-        user = userProfile.objects.filter(user = product.user).first()
-        bl = {"username":product.user.username,"image":product.image.url, "date":product.date,"desc":product.description,"profile":user.image.url,"name":product.name,"price":product.price,"category":product.category,"added":product.added_by_organization}
-        products.append(bl)
-    return render(request,'shop.html',{"products":products,"profile":profile})
 
-def addProduct(request):
-    title = request.POST.get("title")
-    desc = request.POST.get("desc")
-    category = request.POST.get("category")
-    
-    profile = userProfile.objects.filter(user = request.user).first()
-    
-    if not profile.is_an_organization:
-        product = Product.objects.create(name=title, description=desc, category=category, price=10,image = request.FILES['image'],user = request.user,address = request.POST.get('address'))
-    else:
-        product = Product.objects.create(name=title, description=desc, category=category, price=request.POST.get("price"),image = request.FILES['image'],user = request.user,address = "",added_by_organization = True)
 
-    
-    return HttpResponseRedirect(reverse('shop'))
-
-def blood(request):
-    b = Blood.objects.all().order_by('-date')
-    profile = userProfile.objects.filter(user = request.user).first()
-    products = []
-    for blood in b:
-        user = userProfile.objects.filter(user = blood.user).first()
-        bl = {"username":blood.user.username, "date":blood.date,"profile":user.image.url,"firstname":blood.firstname,"lastname":blood.lasname,"type":blood.type,"address":blood.address,"pk":blood.pk}
-        products.append(bl)
-    bl = Blood.objects.filter(user = request.user).first()
-    return render(request,'blood.html',{"bloods":products,"profile":profile,"blood":bl})
-
-def addBlood(request):
-    firstname = request.POST.get("first")
-    lastname = request.POST.get("last")
-    type = request.POST.get("type")
-    # price = request.POST.get("price")
-    blood = Blood.objects.create(firstname=firstname, lasname=lastname, type=type, user = request.user,age = request.POST.get('age'),gender = request.POST.get('gender'),address = request.POST.get('address'))
-    
-    return HttpResponseRedirect(reverse('blood'))
-
-def bloodView(request,pk):
-    b = Blood.objects.all().order_by('-date')
-    profile = userProfile.objects.filter(user = request.user).first()
-    products = []
-    for blood in b:
-        user = userProfile.objects.filter(user = blood.user).first()
-        bl = {"username":blood.user.username, "date":blood.date,"profile":user.image.url,"firstname":blood.firstname,"lastname":blood.lasname,"type":blood.type,"address":blood.address,"pk":blood.pk}
-        products.append(bl)
-    bloodView1 =Blood.objects.filter(pk = pk).first()
-    return render(request,'bloodView.html',{"bloods":products,"profile":profile,"blood":bloodView1})
