@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT               # SPDX is a standard for communicating the terms of a software license
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT               # SPDX is a standard way for communicating the terms of a software license
+pragma solidity ^0.8.0;                      
 
 contract Event {
     

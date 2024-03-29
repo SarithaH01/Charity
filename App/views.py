@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db.models import Q
 from django.contrib.auth.models import User
-from .models import userProfile,Event,Donation,Account,Blog,Track,Product,Blood
+from .models import userProfile,Event,Donation,Account,Blog,Track
 from web3 import Web3                          #web3 is a Python library used to interact with Ethereum nodes
 
 from django.core.files.storage import FileSystemStorage
@@ -153,7 +153,7 @@ def checkSignup(request):             #validate the availability of a username f
 def user_login(request):
    
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username')        # extract the values of username and password from the POST request
         password = request.POST.get('password')
         
         user = authenticate(username = username,password = password)
@@ -180,7 +180,8 @@ def user_logout(request):
 
 
 def donations(request):
-    events = Event.objects.filter(approved = True)      #to fetch all approved events from the database
+    events = Event.objects.filter(approved = True)      #to fetch all Event objects where the approved field is set to True
+    
     
     with open("donation.sol", "r") as file:
             contact_list_file = file.read()
@@ -199,7 +200,7 @@ def donations(request):
     },
     solc_version="0.8.0",
 )
-# print(compiled_sol)
+
     with open("donation_code.json", "w") as file:              
         json.dump(compiled_sol, file)
     #extract the bytecode and ABI from the compiled Solidity code stored in compiled_sol
@@ -241,7 +242,7 @@ def donations(request):
 
 
 def createEvent(request):
-    user = User.objects.filter(username = request.user.username).first()
+    user = User.objects.filter(username = request.user.username).first() #o retrieve a user object from the database based on the username of the user who is currently making the request.
     print(user)
     
     event = Event.objects.create(title = request.POST.get('title'),description = request.POST.get('description'),image = request.FILES['image'],phone = request.POST.get('phone'),address = request.POST.get('address'),user = user, goal = request.POST.get('goal'),hashtag = request.POST.get('hashtag'))
@@ -261,6 +262,7 @@ def createEvent(request):
     # Get the number of latest transaction
     nonce = w3.eth.getTransactionCount(address)
 
+    #This code builds a transaction object for deploying the smart contract to the blockchain
     transaction = ContactList.constructor().buildTransaction(
         {
             "chainId": chain_id,
@@ -269,7 +271,7 @@ def createEvent(request):
             "nonce": nonce,
         }
     )
-    # Sign the transaction
+    # It signs the transaction with a private key.
     sign_transaction = w3.eth.account.sign_transaction(transaction, private_key=private_key)
     print("Deploying Contract!")
     # Send the transaction
@@ -287,11 +289,12 @@ def createEvent(request):
     formatted_time = current_time.strftime("%d/%m/%Y at %I:%M %p")
 
     print("Current date and time:", formatted_time)
+    #This code builds a transaction to add event details to the deployed smart contract.
     store_contact = contact_list.functions.addEventDetails(
         request.POST.get('beneficiary'),str(formatted_time),request.POST.get('accAddress'),request.POST.get('goal'),str(eventHost.account_address)
     ).buildTransaction({"chainId": chain_id, "from": address, "gasPrice": w3.eth.gas_price, "nonce": nonce + 1})
 
-    # Sign the transaction
+    # Sign the transaction with a private key
     sign_store_contact = w3.eth.account.sign_transaction(
         store_contact, private_key=private_key
     )
@@ -320,7 +323,7 @@ def eventView(request,pk):
     },
     solc_version="0.8.0",
 )
-# print(compiled_sol)
+
     with open("donation_code.json", "w") as file:
         json.dump(compiled_sol, file)
 
@@ -360,9 +363,8 @@ def convert_to_ether(amount_in_rupees, conversion_rate=276483):
     ethereum_amount = amount_in_rupees / conversion_rate
     return ethereum_amount
 
-# amount_in_rupees = float(input("Enter amount in Rupees: "))
-# ethereum_amount = convert_to_ether(25000)
-# print("Amount in Ethereum: ", ethereum_amount)
+
+
 
 
 
@@ -394,7 +396,7 @@ def donate(request):
     account_1 = profile.account_address
     account_2 = to_user_profile.account_address
 
-    private_key = profile.private_key #private key srored in user profile
+    private_key = profile.private_key #private key stored in user profile
 
     nonce  = web3.eth.getTransactionCount(account_1)
     ethereum_amount = convert_to_ether(int(request.POST.get('amount')))
@@ -433,12 +435,12 @@ def donate(request):
     return JsonResponse({"success":1})
 
 def tracking(request,pk):
-    event = Event.objects.filter(pk=pk).first()
-    donations = Donation.objects.filter(event = event,user = request.user)
+    event = Event.objects.filter(pk=pk).first()   #queries the Event model to retrieve an event object with the primary key (pk)
+    donations = Donation.objects.filter(event = event,user = request.user) #queries the Donation model to retrieve donation objects associated with the retrieved event
 
     #for account address ------------------>>>>>>>>>>>>
 
-    account = Account.objects.filter(event = event).first()
+    account = Account.objects.filter(event = event).first() #Account model to retrieve an account object associated with the event
 
     
 
@@ -459,7 +461,7 @@ def tracking(request,pk):
     },
     solc_version="0.8.0",
 )
-# print(compiled_sol)
+
     with open("donation_code.json", "w") as file:
         json.dump(compiled_sol, file)
 
@@ -477,12 +479,15 @@ def tracking(request,pk):
         amt_list = []
         try:
         
-            
+            #attempts to retrieve the user profile associated with the event's user
             userpro = userProfile.objects.filter(user = event.user).first()
             
+
+            #donation_1 containing details of the donation, including the donor's username, recipient's username, amount, address, date, and associated image URL
             donation_1 = {'from_user':donation.user.username,"to_user":donation.to_user,"amount":int(donation.amount),"address":donation.toaddress,"date":donation.date,"image":userpro.image.url}
             acc = Account.objects.filter(event = donation.event).first()    
             if donation.sent:
+                #donation_2 containing details of the donation, specifically for the recipient account, if the donation has been sent.
                 donation_2 = {'from_user':donation.to_user,"to_user":acc.username,"address":acc.address,"date":donation.date,"amount":donation.amount}
             amt_list.append(donation_1)
             if donation.sent:
