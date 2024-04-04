@@ -20,5 +20,6 @@ urlpatterns = [
     path('charityDonation/<int:pk>', views.charityDonation,name = 'charityDonation'),
     path('sendDonation/', views.sendDonation,name = 'sendDonation'),
     path('createBlog/', views.createBlog,name = 'createBlog'),
+    path('addFeed/', views.addFeed,name = 'addFeed'),
     
 ]

@@ -118,3 +118,15 @@ class Blood(models.Model):
     
     def __str__(self):
         return self.user.username + " form"
+    
+
+class Feedback(models.Model):
+    
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    comment = models.CharField(max_length=500)
+    
+    sentiment = models.CharField(max_length=500)
+    date= models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username + "'s feedback"  
